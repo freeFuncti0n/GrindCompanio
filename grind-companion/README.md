@@ -2,6 +2,8 @@
 
 iOS/iPad companion app for [smart-grind-by-weight](../smart-grind-by-weight).
 
+**Autor:** [freeFuncti0n](https://github.com/freeFuncti0n)
+
 ## Features
 
 - **Connect** – BLE scan/pair with `GrindByWeight`

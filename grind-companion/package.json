@@ -2,6 +2,12 @@
   "name": "grind-companion",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "author": "freeFuncti0n (https://github.com/freeFuncti0n)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/freeFuncti0n/GrindCompanio.git",
+    "directory": "grind-companion"
+  },
   "dependencies": {
     "@expo-google-fonts/montserrat": "^0.4.2",
     "buffer": "^6.0.3",

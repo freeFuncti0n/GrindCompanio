@@ -2,6 +2,8 @@
 
 Erweiterung zu [smart-grind-by-weight](https://github.com/jaapp/smart-grind-by-weight) by Jaapp.
 
+**Autor:** [freeFuncti0n](https://github.com/freeFuncti0n)
+
 Monorepo: **Companion-App** + **Firmware-Erweiterungen** für Eureka Grind-by-Weight (ESP32-S3).
 
 ## Inhalt
