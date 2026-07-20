@@ -1,0 +1,32 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+
+# Temp / scratch
+_remote_check/
+.worktrees/
+
+# Firmware (PlatformIO)
+smart-grind-by-weight/.pio/
+smart-grind-by-weight/firmware_cache/
+smart-grind-by-weight/venv/
+smart-grind-by-weight/tools/venv/
+smart-grind-by-weight/__pycache__/
+smart-grind-by-weight/**/*.pyc
+smart-grind-by-weight/grinder_data.db
+smart-grind-by-weight/grinder_database.db
+smart-grind-by-weight/failed_session_*.bin
+
+# Companion app (Expo)
+grind-companion/node_modules/
+grind-companion/.expo/
+grind-companion/dist/
+grind-companion/web-build/
+grind-companion/expo-env.d.ts
+grind-companion/ios/
+grind-companion/android/
+grind-companion/.metro-health-check*
+grind-companion/npm-debug.*
+grind-companion/.env*.local

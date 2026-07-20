@@ -1,0 +1,27 @@
+.pio
+.vscode/
+
+# Generated build info
+include/git_info.h
+.build_number
+
+# bin archive
+firmware_cache/
+
+# Tool artifacts
+data.csv
+__pycache__/
+*.pyc
+.DS_Store
+venv/
+.env
+
+# Database directory
+grinder_data.db
+grinder_database.db
+tools/database/
+tools/database/grinder_data.db
+failed_session_*.bin
+
+# Git worktrees
+.worktrees/
