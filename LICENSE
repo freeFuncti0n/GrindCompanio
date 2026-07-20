@@ -1,0 +1,20 @@
+GrindCompanio — Licensing Overview
+==================================
+
+This monorepo contains multiple components under different licenses.
+When distributing or publishing parts of this repository, apply the
+license that covers the respective directory.
+
+1) grind-companion/ (Companion mobile app)
+   Copyright (c) 2026 freeFuncti0n
+   Licensed under the MIT License — see grind-companion/LICENSE
+
+2) smart-grind-by-weight/ (ESP32 firmware, hardware docs, 3D files)
+   Derived from smart-grind-by-weight by jaapp and contributors.
+   Software: GNU General Public License v3.0 or later — see smart-grind-by-weight/LICENSE
+   Hardware designs (STL, mechanical files): CERN-OHL-S v2 — see smart-grind-by-weight/LICENSE
+
+3) Third-party components
+   See NOTICE for bundled libraries and their licenses.
+
+This overview file does not replace the full license texts in the paths above.

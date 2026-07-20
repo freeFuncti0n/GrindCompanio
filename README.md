@@ -51,8 +51,23 @@ Siehe [`smart-grind-by-weight/docs/DEVELOPMENT.md`](smart-grind-by-weight/docs/D
 
 ## Upstream
 
-Firmware basiert auf **jaapp/smart-grind-by-weight**. Companion-App nutzt dasselbe BLE-Protokoll (`src/config/bluetooth.h`).
+Firmware basiert auf **jaapp/smart-grind-by-weight** (GPL-3.0). Companion-App ist eigenständige MIT-Software. Details: [LICENSE](LICENSE), [NOTICE](NOTICE).
 
-## Lizenz
+## Rechtliches (Public Repository)
 
-Firmware: siehe Upstream-Repo. Companion-App: privates Projekt — siehe jeweilige Ordner.
+| Dokument | Inhalt |
+|----------|--------|
+| [LICENSE](LICENSE) | Lizenz-Übersicht (MIT App + GPL/CERN Firmware) |
+| [NOTICE](NOTICE) | Third-Party-Lizenzen |
+| [DISCLAIMER.md](DISCLAIMER.md) | Haftungsausschluss (Hardware/Software) |
+| [PRIVACY.md](PRIVACY.md) | Datenschutz Companion-App |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Mitmachen |
+| [AUTHORS.md](AUTHORS.md) | Autoren |
+| [`smart-grind-by-weight/FORK.md`](smart-grind-by-weight/FORK.md) | GPL-Fork-Hinweis & Änderungen |
+
+**Lizenzen im Detail:**
+
+- **`grind-companion/`** — [MIT](grind-companion/LICENSE), Copyright freeFuncti0n
+- **`smart-grind-by-weight/`** — [GPL-3.0 + CERN-OHL-S](smart-grind-by-weight/LICENSE), Fork von jaapp
+
+Markennamen (z. B. Eureka) gehören ihren Inhabern; kein offizielles Endorsement.

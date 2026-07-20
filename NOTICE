@@ -1,0 +1,45 @@
+Third-Party Notices
+===================
+
+This repository bundles or depends on third-party software. Below is a
+non-exhaustive list of notable components. See each component's directory
+for complete license texts.
+
+Firmware (smart-grind-by-weight/)
+---------------------------------
+
+Upstream base project:
+  smart-grind-by-weight — https://github.com/jaapp/smart-grind-by-weight
+  Copyright Grind-by-Weight Contributors — GNU GPL v3+
+
+Platform & libraries (via PlatformIO / Arduino):
+  LVGL — MIT License — https://github.com/lvgl/lvgl
+  Arduino_GFX — BSD License — https://github.com/moononournation/Arduino_GFX
+  esp32-flashz — MIT License — https://github.com/vortigont/esp32-flashz
+  ESP-IDF / Arduino-ESP32 — Apache 2.0 — https://github.com/espressif
+
+In-tree components:
+  detools / heatshrink — BSD 2-Clause — smart-grind-by-weight/components/detools/
+  delta — Apache 2.0 — smart-grind-by-weight/components/delta/
+
+Algorithms / drivers:
+  HX711 bit-bang timing derived from HX711_ADC by Olav Kallhovd (MIT)
+  — see smart-grind-by-weight/src/hardware/hx711_driver.cpp
+
+Companion app (grind-companion/)
+--------------------------------
+
+Runtime dependencies (see grind-companion/package-lock.json):
+  Expo, React, React Native — MIT
+  react-native-ble-plx — MIT
+  expo-sqlite — MIT
+  zustand — MIT
+  and other npm packages as declared in package-lock.json
+
+Trademarks
+----------
+
+"Eureka", "Mignon", and related product names are trademarks of their
+respective owners. "GrindByWeight" refers to the BLE device name used
+by the firmware project. This project is not affiliated with or endorsed
+by Eureka or any grinder manufacturer.

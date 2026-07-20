@@ -2,6 +2,7 @@
   "name": "grind-companion",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "license": "MIT",
   "author": "freeFuncti0n (https://github.com/freeFuncti0n)",
   "repository": {
     "type": "git",
@@ -47,6 +48,5 @@
     "web": "expo start --web --clear",
     "test:parser": "tsx scripts/parser-smoke.ts",
     "typecheck": "tsc --noEmit"
-  },
-  "private": true
+  }
 }
