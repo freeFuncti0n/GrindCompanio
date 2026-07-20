@@ -1,6 +1,8 @@
 # GrindCompanio
 
-Monorepo: **Companion-App** + **Firmware-Erweiterungen** für [smart-grind-by-weight](https://github.com/jaapp/smart-grind-by-weight) (Eureka Grind-by-Weight, ESP32-S3).
+Erweiterung zu [smart-grind-by-weight](https://github.com/jaapp/smart-grind-by-weight) by Jaapp.
+
+Monorepo: **Companion-App** + **Firmware-Erweiterungen** für Eureka Grind-by-Weight (ESP32-S3).
 
 ## Inhalt
 
