@@ -33,7 +33,7 @@ export function BeansPage() {
   return (
     <div className="page">
       <p>
-        <Link to="/analytics">{t('common.backToAnalytics')}</Link>
+        <Link to="/journal">{t('journalPage.back')}</Link>
       </p>
       <h1>{t('beans.title')}</h1>
       <form className="card" onSubmit={onSubmit}>

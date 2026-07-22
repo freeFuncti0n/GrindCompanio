@@ -1,27 +1,32 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { listSessionMetaWithBeans, listSessions } from '../db/database';
+import { listJournalEntries, listSessions } from '../db/database';
 import type { GrindSession } from '../parsing/types';
-import { calcRatio } from '../journal/types';
+import {
+  calcExtractionYield,
+  calcRatio,
+  effectiveDose,
+} from '../journal/types';
 import { formatJournalSummaryI18n } from '../i18n/journalSummary';
 import { useEnumLabels } from '../i18n/useEnumLabels';
-import type { SessionMetaWithBean } from '../journal/types';
+import type { JournalEntryWithBean } from '../journal/types';
 
 export function AnalyticsPage() {
   const { t } = useTranslation();
   const { profile, mode } = useEnumLabels();
   const [sessions, setSessions] = useState<GrindSession[]>([]);
-  const [metaById, setMetaById] = useState<Map<number, SessionMetaWithBean>>(new Map());
+  const [metaById, setMetaById] = useState<Map<number, JournalEntryWithBean>>(new Map());
 
   useEffect(() => {
     void (async () => {
-      const [sessionList, metas] = await Promise.all([
-        listSessions(),
-        listSessionMetaWithBeans(),
-      ]);
+      const [sessionList, metas] = await Promise.all([listSessions(), listJournalEntries()]);
       setSessions(sessionList);
-      setMetaById(new Map(metas.map((m) => [m.session_id, m])));
+      const bySession = new Map<number, JournalEntryWithBean>();
+      for (const m of metas) {
+        if (m.session_id != null) bySession.set(m.session_id, m);
+      }
+      setMetaById(bySession);
     })();
   }, []);
 
@@ -30,6 +35,7 @@ export function AnalyticsPage() {
       <h1>{t('analytics.title')}</h1>
       <p className="muted">
         {t('analytics.intro')}{' '}
+        <Link to="/journal">{t('nav.journal')}</Link> ·{' '}
         <Link to="/beans">{t('analytics.beans')}</Link> ·{' '}
         <Link to="/diagnose">{t('analytics.diagnose')}</Link>
       </p>
@@ -40,12 +46,15 @@ export function AnalyticsPage() {
         <ul className="session-list">
           {sessions.map((s) => {
             const meta = metaById.get(s.session_id);
+            const dose = meta ? effectiveDose(meta, s.final_weight || s.target_weight) : null;
             const journalLine = meta
               ? formatJournalSummaryI18n(t, {
+                  title: meta.title,
                   bean_name: meta.bean_name,
                   grind_setting: meta.grind_setting,
                   brew_time_s: meta.brew_time_s,
-                  ratio: calcRatio(meta.yield_g, meta.dose_g ?? s.final_weight),
+                  ratio: calcRatio(meta.yield_g, dose),
+                  extraction_pct: calcExtractionYield(meta.tds_pct, meta.yield_g, dose),
                 })
               : null;
             return (

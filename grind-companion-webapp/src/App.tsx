@@ -6,6 +6,8 @@ import { AnalyticsPage } from './pages/AnalyticsPage';
 import { SessionPage } from './pages/SessionPage';
 import { BeansPage } from './pages/BeansPage';
 import { DiagnosePage } from './pages/DiagnosePage';
+import { JournalPage } from './pages/JournalPage';
+import { JournalEntryPage } from './pages/JournalEntryPage';
 import { SettingsMenu } from './components/SettingsMenu';
 import { useGrinderStore } from './store/grinderStore';
 
@@ -34,6 +36,8 @@ export default function App() {
           <Route path="/session/:id" element={<SessionPage />} />
           <Route path="/beans" element={<BeansPage />} />
           <Route path="/diagnose" element={<DiagnosePage />} />
+          <Route path="/journal" element={<JournalPage />} />
+          <Route path="/journal/:id" element={<JournalEntryPage />} />
         </Routes>
       </main>
 
@@ -41,6 +45,7 @@ export default function App() {
         <NavLink to="/" end>
           {t('nav.grind')}
         </NavLink>
+        <NavLink to="/journal">{t('nav.journal')}</NavLink>
         <NavLink to="/analytics">{t('nav.analytics')}</NavLink>
         <NavLink to="/connect">{t('nav.connect')}</NavLink>
       </nav>

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getEvents, getMeasurements, getSession } from '../db/database';
 import type { GrindEvent, GrindMeasurement, GrindSession } from '../parsing/types';
 import { SessionChart } from '../components/SessionChart';
-import { SessionJournalForm } from '../components/SessionJournalForm';
+import { JournalEntryForm } from '../components/JournalEntryForm';
 import { useEnumLabels } from '../i18n/useEnumLabels';
 
 export function SessionPage() {
@@ -65,7 +65,7 @@ export function SessionPage() {
 
       <SessionChart points={chartPoints} height={200} />
 
-      <SessionJournalForm sessionId={sessionId} doseG={doseG} />
+      <JournalEntryForm sessionId={sessionId} defaultDoseG={doseG} />
     </div>
   );
 }
