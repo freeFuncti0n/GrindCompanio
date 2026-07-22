@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   handleGrindCompletionSync,
   isGrindActivePhase,
@@ -9,9 +10,11 @@ import {
 import { listSessions } from '../db/database';
 import { ProgressArc } from '../components/ProgressArc';
 import { SessionChart } from '../components/SessionChart';
-import { PHASE_NAMES } from '../parsing/types';
+import { useEnumLabels } from '../i18n/useEnumLabels';
 
 export function GrindPage() {
+  const { t } = useTranslation();
+  const { phase } = useEnumLabels();
   const status = useGrinderStore((s) => s.status);
   const live = useGrinderStore((s) => s.live);
   const liveChart = useGrinderStore((s) => s.liveChart);
@@ -46,29 +49,38 @@ export function GrindPage() {
   if (!connected) {
     return (
       <div className="page">
-        <h1>Grind</h1>
+        <h1>{t('grind.title')}</h1>
         <p className="muted">
-          Nicht verbunden. Unter <Link to="/connect">Connect</Link> die ESP-IP eintragen
-          (WiFi-Firmware erforderlich).
+          <Trans
+            i18nKey="grind.notConnected"
+            components={{ link: <Link to="/connect" /> }}
+          />
         </p>
       </div>
     );
   }
 
+  const phaseSuffix =
+    live != null ? ` · ${phase(live.phase_id)}` : '';
+
   return (
     <div className="page grind-page">
-      <h1>Grind</h1>
+      <h1>{t('grind.title')}</h1>
       <p className="muted">
-        Live: {liveSupported ? 'WebSocket' : '—'} · Remote:{' '}
-        {remoteSupported ? 'bereit' : 'Firmware-Update'}
-        {live ? ` · ${PHASE_NAMES[live.phase_id] ?? live.phase_id}` : ''}
+        {t('grind.liveRemote', {
+          live: liveSupported ? 'WebSocket' : t('common.dash'),
+          remote: remoteSupported ? t('common.ready') : t('grind.remoteFirmware'),
+          phase: phaseSuffix,
+        })}
       </p>
 
       <div className="arc-wrap">
         <ProgressArc progress={progress} />
         <div className="arc-center">
           <div className="weight">{weight.toFixed(1)} g</div>
-          <div className="muted">Ziel {target.toFixed(1)} g · {flow.toFixed(2)} g/s</div>
+          <div className="muted">
+            {t('grind.targetFlow', { target: target.toFixed(1), flow: flow.toFixed(2) })}
+          </div>
         </div>
       </div>
 
@@ -83,7 +95,7 @@ export function GrindPage() {
       <div className="actions">
         {purgeConfirm ? (
           <button className="btn primary" type="button" onClick={() => void continueRemotePurge()}>
-            Purge bestätigen
+            {t('grind.confirmPurge')}
           </button>
         ) : null}
         {!grindActive ? (
@@ -93,16 +105,16 @@ export function GrindPage() {
             disabled={!remoteSupported}
             onClick={() => void startRemoteGrind()}
           >
-            Start
+            {t('grind.start')}
           </button>
         ) : (
           <button className="btn danger" type="button" onClick={() => void stopRemoteGrind()}>
-            Stop
+            {t('grind.stop')}
           </button>
         )}
         {(phaseId === 12 || phaseId === 13) && (
           <button className="btn" type="button" onClick={() => void returnRemoteIdle()}>
-            Idle
+            {t('grind.idle')}
           </button>
         )}
       </div>

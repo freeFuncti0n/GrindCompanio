@@ -1,8 +1,10 @@
 import { useGrinderStore } from '../store/grinderStore';
 import { listSessions } from '../db/database';
 import { useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 
 export function ConnectPage() {
+  const { t } = useTranslation();
   const {
     status,
     wifiHost,
@@ -24,30 +26,32 @@ export function ConnectPage() {
   const [busyMsg, setBusyMsg] = useState<string | null>(null);
   const busy = status === 'connecting' || isSyncing;
 
+  const statusLabel =
+    status === 'connected'
+      ? t('connect.connected', { device: deviceName ?? 'GrindByWeight' })
+      : status === 'connecting'
+        ? t('connect.connecting')
+        : status === 'error'
+          ? t('connect.error')
+          : t('connect.disconnected');
+
   return (
     <div className="page">
-      <h1>Connect</h1>
+      <h1>{t('connect.title')}</h1>
       <p className="muted">
-        ESP und dieses Gerät müssen im gleichen <strong>2,4‑GHz‑WLAN</strong> sein. Die NAS hostet nur
-        die UI — der Browser spricht direkt mit dem ESP (Port 8080).
+        <Trans i18nKey="connect.wifiHint" components={{ strong: <strong /> }} />
       </p>
 
       <div className="card">
-        <div className="label">Status</div>
-        <div className="status">
-          {status === 'connected'
-            ? `Verbunden · ${deviceName ?? 'GrindByWeight'}`
-            : status === 'connecting'
-              ? 'Verbinde…'
-              : status === 'error'
-                ? 'Fehler'
-                : 'Getrennt'}
-        </div>
+        <div className="label">{t('common.status')}</div>
+        <div className="status">{statusLabel}</div>
         {systemInfo ? <pre className="info">{systemInfo}</pre> : null}
         {status === 'connected' ? (
           <p className="muted">
-            Live: {liveSupported ? 'aktiv' : '—'} · Remote:{' '}
-            {remoteSupported ? 'bereit' : 'nach Firmware-Update'}
+            {t('connect.liveRemote', {
+              live: liveSupported ? t('common.active') : t('common.dash'),
+              remote: remoteSupported ? t('common.ready') : t('connect.remoteFirmware'),
+            })}
           </p>
         ) : null}
       </div>
@@ -55,7 +59,7 @@ export function ConnectPage() {
       {status !== 'connected' ? (
         <div className="card">
           <label className="label" htmlFor="esp-ip">
-            Grinder IP (LAN)
+            {t('connect.grinderIp')}
           </label>
           <input
             id="esp-ip"
@@ -65,7 +69,7 @@ export function ConnectPage() {
             onChange={(e) => setWifiHost(e.target.value)}
             autoComplete="off"
           />
-          <p className="hint">Nur IP oder Host — Port 8080 wird automatisch ergänzt.</p>
+          <p className="hint">{t('connect.ipHint')}</p>
           <div className="actions">
             <button
               className="btn primary"
@@ -76,7 +80,7 @@ export function ConnectPage() {
                 void connectWifi();
               }}
             >
-              WiFi verbinden
+              {t('connect.connectWifi')}
             </button>
           </div>
         </div>
@@ -97,17 +101,17 @@ export function ConnectPage() {
               }
             }}
           >
-            Sync Sessions
+            {t('connect.syncSessions')}
           </button>
           <button className="btn" type="button" disabled={busy} onClick={() => void disconnect()}>
-            Trennen
+            {t('connect.disconnect')}
           </button>
         </div>
       )}
 
       {isSyncing || syncMessage ? (
         <div className="card">
-          <div className="label">Sync</div>
+          <div className="label">{t('connect.sync')}</div>
           <p>{syncMessage}</p>
           <div className="progress-bar">
             <div style={{ width: `${syncProgress}%` }} />

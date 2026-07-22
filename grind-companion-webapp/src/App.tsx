@@ -1,22 +1,28 @@
 import { NavLink, Route, Routes } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { GrindPage } from './pages/GrindPage';
 import { ConnectPage } from './pages/ConnectPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
 import { SessionPage } from './pages/SessionPage';
 import { BeansPage } from './pages/BeansPage';
 import { DiagnosePage } from './pages/DiagnosePage';
+import { SettingsMenu } from './components/SettingsMenu';
 import { useGrinderStore } from './store/grinderStore';
 
 export default function App() {
+  const { t } = useTranslation();
   const status = useGrinderStore((s) => s.status);
   const connected = status === 'connected';
 
   return (
     <div className="app-shell">
       <header className="topbar">
-        <div className="brand">Grind Companion</div>
-        <div className={`pill ${connected ? 'on' : 'off'}`}>
-          {connected ? 'WiFi' : 'offline'}
+        <div className="brand">{t('app.brand')}</div>
+        <div className="topbar-actions">
+          <div className={`pill ${connected ? 'on' : 'off'}`}>
+            {connected ? t('app.wifi') : t('app.offline')}
+          </div>
+          <SettingsMenu />
         </div>
       </header>
 
@@ -33,10 +39,10 @@ export default function App() {
 
       <nav className="tabbar">
         <NavLink to="/" end>
-          Grind
+          {t('nav.grind')}
         </NavLink>
-        <NavLink to="/analytics">Analytics</NavLink>
-        <NavLink to="/connect">Connect</NavLink>
+        <NavLink to="/analytics">{t('nav.analytics')}</NavLink>
+        <NavLink to="/connect">{t('nav.connect')}</NavLink>
       </nav>
     </div>
   );

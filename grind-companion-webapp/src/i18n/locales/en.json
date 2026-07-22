@@ -1,0 +1,158 @@
+{
+  "app": {
+    "brand": "Grind Companion",
+    "offline": "offline",
+    "wifi": "WiFi"
+  },
+  "nav": {
+    "grind": "Grind",
+    "analytics": "Analytics",
+    "connect": "Connect"
+  },
+  "settings": {
+    "open": "Settings",
+    "language": "Language",
+    "de": "German",
+    "en": "English"
+  },
+  "common": {
+    "status": "Status",
+    "back": "Back",
+    "backToAnalytics": "← Analytics",
+    "all": "All",
+    "name": "Name",
+    "target": "Target",
+    "error": "Error",
+    "events": "Events",
+    "samples": "Samples",
+    "score": "Score",
+    "hit": "Hit",
+    "active": "active",
+    "ready": "ready",
+    "dash": "—"
+  },
+  "connect": {
+    "title": "Connect",
+    "wifiHint": "The ESP and this device must be on the same <strong>2.4 GHz Wi‑Fi</strong> network.",
+    "connected": "Connected · {{device}}",
+    "connecting": "Connecting…",
+    "error": "Error",
+    "disconnected": "Disconnected",
+    "liveRemote": "Live: {{live}} · Remote: {{remote}}",
+    "remoteFirmware": "firmware update required",
+    "grinderIp": "Grinder IP (LAN)",
+    "ipHint": "IP or hostname only — port 8080 is added automatically.",
+    "connectWifi": "Connect WiFi",
+    "syncSessions": "Sync Sessions",
+    "disconnect": "Disconnect",
+    "sync": "Sync"
+  },
+  "grind": {
+    "title": "Grind",
+    "notConnected": "Not connected. Enter the ESP IP under <link>Connect</link> (WiFi firmware required).",
+    "liveRemote": "Live: {{live}} · Remote: {{remote}}{{phase}}",
+    "remoteFirmware": "firmware update",
+    "targetFlow": "Target {{target}} g · {{flow}} g/s",
+    "confirmPurge": "Confirm purge",
+    "start": "Start",
+    "stop": "Stop",
+    "idle": "Idle"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "intro": "Sessions from IndexedDB (sync via Connect / after grind).",
+    "beans": "Beans",
+    "diagnose": "Diagnose",
+    "empty": "No sessions yet. Connect the ESP and tap Sync."
+  },
+  "session": {
+    "notFound": "Session not found.",
+    "title": "Session #{{id}}",
+    "stats": "{{final}} g (target {{target}} g) · Error {{error}} g · {{events}} Events · {{samples}} Samples"
+  },
+  "beans": {
+    "title": "Beans",
+    "roaster": "Roaster",
+    "origin": "Origin",
+    "add": "Add"
+  },
+  "diagnose": {
+    "title": "Diagnose",
+    "goal": "Target: shot time {{brewMin}}–{{brewMax}} s · ratio {{ratioMin}}–{{ratioMax}} · score ≥ {{scoreMin}}",
+    "recommendations": "Recommendations",
+    "notEnoughData": "Not enough journal data yet (min. 2 shots per setting).",
+    "recommendationLine": "{{bean}} @ {{dial}} · Score {{score}} · Hit {{hit}}%",
+    "dialOverview": "Dial overview",
+    "noAggregates": "No aggregates — fill journal with shot time, yield and score.",
+    "dialLine": "{{bean}} @ {{dial}} · n={{n}} · {{ratio}} · {{brew}} s · Hit {{hits}}/{{n}}"
+  },
+  "journal": {
+    "title": "Journal",
+    "hint": "Dose from WiFi session: {{dose}} g · target shot time {{brewMin}}–{{brewMax}} s · ratio {{ratioMin}}–{{ratioMax}} · score ≥ {{scoreMin}}",
+    "bean": "Bean",
+    "new": "+ New",
+    "all": "All",
+    "beanNamePlaceholder": "Bean name",
+    "create": "Create",
+    "grindSetting": "Grind setting (dial)",
+    "brewTime": "Shot time (s)",
+    "yield": "Yield (g)",
+    "doseRatio": "Dose / ratio",
+    "doseRatioValue": "{{dose}} g · {{ratio}}",
+    "basket": "Basket",
+    "basketPlaceholder": "18g VST",
+    "taste": "Taste",
+    "targetHit": "Target hit",
+    "targetMiss": "Outside target range",
+    "grindNote": "Grind note",
+    "grindNotePlaceholder": "finer adjustment",
+    "notes": "Notes",
+    "notesPlaceholder": "Taste, channeling, …",
+    "save": "Save journal",
+    "saving": "…",
+    "saved": "Saved",
+    "saveFailed": "Save failed",
+    "dial": "Dial {{value}}",
+    "brewSeconds": "{{value}}s"
+  },
+  "chart": {
+    "empty": "No live data"
+  },
+  "enum": {
+    "profile": {
+      "0": "SINGLE",
+      "1": "DOUBLE",
+      "2": "CUSTOM"
+    },
+    "mode": {
+      "0": "WEIGHT",
+      "1": "TIME"
+    },
+    "termination": {
+      "0": "COMPLETE",
+      "1": "TIMEOUT",
+      "2": "OVERSHOOT",
+      "3": "MAX_PULSES",
+      "255": "UNKNOWN"
+    },
+    "phase": {
+      "0": "IDLE",
+      "1": "INITIALIZING",
+      "2": "SETUP",
+      "3": "TARING",
+      "4": "TARE_CONFIRM",
+      "5": "PREDICTIVE",
+      "6": "PULSE_DECISION",
+      "7": "PULSE_EXECUTE",
+      "8": "PULSE_SETTLING",
+      "9": "FINAL_SETTLING",
+      "10": "TIME_GRINDING",
+      "11": "TIME_ADDITIONAL_PULSE",
+      "12": "COMPLETED",
+      "13": "TIMEOUT",
+      "14": "PRIME",
+      "15": "PRIME_SETTLING",
+      "16": "PURGE_CONFIRM"
+    }
+  }
+}

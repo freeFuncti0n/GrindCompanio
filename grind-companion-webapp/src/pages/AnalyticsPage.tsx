@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { listSessionMetaWithBeans, listSessions } from '../db/database';
 import type { GrindSession } from '../parsing/types';
-import { MODE_MAP, PROFILE_MAP } from '../parsing/types';
-import {
-  calcRatio,
-  formatJournalSummary,
-  type SessionMetaWithBean,
-} from '../journal/types';
+import { calcRatio } from '../journal/types';
+import { formatJournalSummaryI18n } from '../i18n/journalSummary';
+import { useEnumLabels } from '../i18n/useEnumLabels';
+import type { SessionMetaWithBean } from '../journal/types';
 
 export function AnalyticsPage() {
+  const { t } = useTranslation();
+  const { profile, mode } = useEnumLabels();
   const [sessions, setSessions] = useState<GrindSession[]>([]);
   const [metaById, setMetaById] = useState<Map<number, SessionMetaWithBean>>(new Map());
 
@@ -26,20 +27,21 @@ export function AnalyticsPage() {
 
   return (
     <div className="page">
-      <h1>Analytics</h1>
+      <h1>{t('analytics.title')}</h1>
       <p className="muted">
-        Sessions aus IndexedDB (Sync über Connect / nach Grind).{' '}
-        <Link to="/beans">Bohnen</Link> · <Link to="/diagnose">Diagnose</Link>
+        {t('analytics.intro')}{' '}
+        <Link to="/beans">{t('analytics.beans')}</Link> ·{' '}
+        <Link to="/diagnose">{t('analytics.diagnose')}</Link>
       </p>
 
       {sessions.length === 0 ? (
-        <p className="muted">Noch keine Sessions. Verbinde den ESP und tippe Sync.</p>
+        <p className="muted">{t('analytics.empty')}</p>
       ) : (
         <ul className="session-list">
           {sessions.map((s) => {
             const meta = metaById.get(s.session_id);
             const journalLine = meta
-              ? formatJournalSummary({
+              ? formatJournalSummaryI18n(t, {
                   bean_name: meta.bean_name,
                   grind_setting: meta.grind_setting,
                   brew_time_s: meta.brew_time_s,
@@ -49,9 +51,7 @@ export function AnalyticsPage() {
             return (
               <li key={s.session_id}>
                 <Link to={`/session/${s.session_id}`}>
-                  <strong>#{s.session_id}</strong>{' '}
-                  {PROFILE_MAP[s.profile_id] ?? s.profile_id} ·{' '}
-                  {MODE_MAP[s.grind_mode] ?? s.grind_mode}
+                  <strong>#{s.session_id}</strong> {profile(s.profile_id)} · {mode(s.grind_mode)}
                   <span className="muted">
                     {' '}
                     · {s.final_weight.toFixed(1)} g / {s.target_weight.toFixed(1)} g ·{' '}
