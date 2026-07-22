@@ -2,8 +2,6 @@
 
 An extension of [smart-grind-by-weight](https://github.com/jaapp/smart-grind-by-weight) by [jaapp](https://github.com/jaapp) and contributors.
 
-**Author:** [freeFuncti0n](https://github.com/freeFuncti0n)
-
 Browser companion for the Eureka Grind-by-Weight mod — live grinding, shot journaling, and dial tuning over **WiFi** (REST + WebSocket). No phone app required.
 
 **Setup (flash firmware, Docker, first connection):** **[docs/DOC.md](docs/DOC.md)**
