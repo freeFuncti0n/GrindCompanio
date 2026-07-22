@@ -172,6 +172,20 @@ export async function upsertSessionMeta(input: SessionMetaInput): Promise<void> 
   await db.put('meta', { ...input, updated_at: Math.floor(Date.now() / 1000) });
 }
 
+export async function getLastJournalDefaults(): Promise<{
+  bean_id: number | null;
+  grind_setting: number | null;
+} | null> {
+  const db = await getDb();
+  const metas = await db.getAll('meta');
+  const sorted = metas
+    .filter((m) => m.bean_id != null || m.grind_setting != null)
+    .sort((a, b) => b.updated_at - a.updated_at);
+  const last = sorted[0];
+  if (!last) return null;
+  return { bean_id: last.bean_id, grind_setting: last.grind_setting };
+}
+
 export async function listSessionMetaWithBeans(): Promise<SessionMetaWithBean[]> {
   const db = await getDb();
   const metas = await db.getAll('meta');

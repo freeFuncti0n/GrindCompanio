@@ -1,9 +1,9 @@
 # Flash WiFi firmware
 
-**Primary guide (branch `firmware/v1.4.0-wifi`):**  
-[`smart-grind-by-weight/docs/WIFI_SETUP.md`](../../smart-grind-by-weight/docs/WIFI_SETUP.md)
+**Kurzanleitung:** [Root-README](../../README.md)  
+**Ausführlich:** [`smart-grind-by-weight/docs/WIFI_SETUP.md`](../../smart-grind-by-weight/docs/WIFI_SETUP.md)
 
-## File to edit for WLAN
+## WLAN-Credentials
 
 [`smart-grind-by-weight/src/config/wifi_credentials.h`](../../smart-grind-by-weight/src/config/wifi_credentials.h)
 
@@ -12,12 +12,11 @@
 #define WIFI_PASSWORD "YourPassword"
 ```
 
-Then rebuild:
+Danach neu bauen und flashen (PlatformIO upload oder esptool). Die vorkompilierte Release-`.bin` hat leere SSID/Passwort.
 
 ```powershell
 cd smart-grind-by-weight
 .\scripts\build-wifi-release.ps1
-# flash via PlatformIO upload or esptool — see WIFI_SETUP.md
 ```
 
-Prebuilt binaries (empty SSID): `smart-grind-by-weight/release/`
+Prebuilt: `smart-grind-by-weight/release/`
