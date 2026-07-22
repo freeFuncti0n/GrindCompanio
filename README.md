@@ -4,11 +4,75 @@ An extension of [smart-grind-by-weight](https://github.com/jaapp/smart-grind-by-
 
 **Author:** [freeFuncti0n](https://github.com/freeFuncti0n)
 
-Monorepo: **browser companion** + ESP32 firmware with WiFi LAN API for Eureka Grind-by-Weight.
+Browser companion for the Eureka Grind-by-Weight mod — live grinding, shot journaling, and dial tuning over **WiFi** (REST + WebSocket). No phone app required.
 
-> The companion is a **web app** in the browser (WiFi). Live data and remote control use **REST + WebSocket**, not BLE.
+**Setup (flash firmware, Docker, first connection):** **[docs/DOC.md](docs/DOC.md)**
 
-**Full setup guide (flash → Docker → first use):** **[docs/DOC.md](docs/DOC.md)**
+---
+
+## What it does
+
+GrindCompanio turns your grind-by-weight scale into a connected espresso workflow tool. The web app runs in any browser on your LAN; grind data stays on your device in **IndexedDB** (no cloud account).
+
+### Live grinding
+
+- Real-time weight curve and flow rate during each grind
+- Remote **Start**, **Stop**, **Purge**, and **Idle** from the browser
+- Session stats: target dose, final weight, error, events, and measurement samples
+
+### Shot journal
+
+Document every extraction alongside the grind session — your personal brew log:
+
+- **Bean** (linked to your bean library or ad hoc)
+- **Grind setting** (dial position)
+- **Shot time**, **yield**, and automatic **dose / ratio**
+- **Basket** (e.g. 18 g VST)
+- **Taste score** (1–5)
+- **Grind note** and free-form **notes** (channeling, adjustments, etc.)
+- **Target hit** indicator when shot time, ratio, and score meet your goals
+- Remembers your last journal entries as defaults for the next shot
+
+### Bean library
+
+- Save beans with name, roaster, and origin
+- Reuse beans across sessions and filter analytics by bean
+
+### Analytics
+
+- Browse all synced grind sessions
+- Quick overview of journal data per session (bean, dial, score, target hit)
+- Open any session for the full weight chart and editable journal
+
+### Diagnose
+
+Dial tuning assistant based on your journal history:
+
+- Aggregates shots by bean and grind setting
+- **Hit rate** — how often you land inside your target window
+- **Recommendations** — which dial settings perform best (needs at least 2 logged shots per setting)
+- Configurable targets: shot time range, ratio range, minimum taste score
+
+### Connect & sync
+
+- Connect to the ESP on your **2.4 GHz Wi‑Fi** LAN by IP
+- Pull grind session history from the device into the browser
+- Live stream and remote control when WiFi firmware is active
+
+### Languages
+
+**German** and **English** — switch via the gear icon in the header.
+
+---
+
+## How it fits together
+
+```
+Browser  →  Web UI (NAS / PC / dev server)
+Browser  →  ESP32 grinder (same LAN, port 8080)
+```
+
+The UI is static; your browser talks **directly** to the grinder. The NAS (or any host) only serves the app files.
 
 ---
 
@@ -22,49 +86,13 @@ GrindCompanio adds a WiFi LAN API and browser companion on top of that foundatio
 
 ---
 
-## Quick start
-
-| Step | Action |
-|------|--------|
-| 1 | Build the grinder mod — [upstream DOC](https://github.com/jaapp/smart-grind-by-weight/blob/main/docs/DOC.md) |
-| 2 | Flash **GrindCompanio WiFi firmware** — [docs/DOC.md § Flash](docs/DOC.md#flash-grindcompanio-wifi-firmware) |
-| 3 | Host **web app** on Docker — [docs/DOC.md § Docker](docs/DOC.md#host-the-web-app-with-docker) |
-
-```
-Browser  --loads UI-->  NAS :8088 (nginx / Docker)
-Browser  --REST/WS-->  ESP :8080  (same 2.4 GHz LAN)
-```
-
-```bash
-cd grind-companion-webapp
-cp .env.example .env    # optional: change WEB_PORT
-docker compose up -d --build
-# → http://<nas-ip>:8088
-```
-
-Local development: `npm run dev` in `grind-companion-webapp` → `http://localhost:5173`
-
----
-
-## Web app features
-
-| Area | Description |
-|------|-------------|
-| Connect | ESP IP, status, session sync |
-| Grind | Live weight/chart via **WebSocket**, remote Start/Stop/Purge |
-| Analytics | Sessions, journal (bean, dial, shot time, yield, ratio, score), beans, diagnose |
-
-UI languages: **German** and **English** (gear icon in the header).
-
----
-
-## Repository layout
+## Repository
 
 | Folder | Description |
 |--------|-------------|
-| [`grind-companion-webapp/`](grind-companion-webapp/) | Browser companion (WiFi) + Docker |
+| [`grind-companion-webapp/`](grind-companion-webapp/) | Browser companion (React/Vite) + Docker |
 | [`smart-grind-by-weight/`](smart-grind-by-weight/) | Firmware v1.4.0 + WiFi API + release binaries |
-| [`docs/DOC.md`](docs/DOC.md) | End-to-end setup guide |
+| [`docs/DOC.md`](docs/DOC.md) | Setup guide (hardware, flash, Docker, first use) |
 
 Development and releases are on **`main`**.
 
