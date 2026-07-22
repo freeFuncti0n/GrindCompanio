@@ -7,6 +7,9 @@
 #include "../controllers/profile_controller.h"
 #include "../controllers/grind_controller.h"
 #include "../bluetooth/manager.h"
+#include "../network/wifi_manager.h"
+#include "../network/http_server.h"
+#include "../network/remote_grind_queue.h"
 #include "../ui/ui_manager.h"
 #include "../hardware/WeightSensor.h"
 #include "../hardware/grinder.h"
@@ -30,6 +33,8 @@ TaskManager::TaskManager() {
     profile_controller = nullptr;
     grind_controller = nullptr;
     bluetooth_manager = nullptr;
+    wifi_manager = nullptr;
+    http_server = nullptr;
     ui_manager = nullptr;
     
     tasks_initialized = false;
@@ -47,12 +52,15 @@ TaskManager::~TaskManager() {
 }
 
 bool TaskManager::init(HardwareManager* hw_mgr, StateMachine* sm, ProfileController* pc,
-                      GrindController* gc, BluetoothManager* bluetooth, UIManager* ui) {
+                      GrindController* gc, BluetoothManager* bluetooth, UIManager* ui,
+                      WifiManager* wifi, HttpServer* http) {
     hardware_manager = hw_mgr;
     state_machine = sm;
     profile_controller = pc;
     grind_controller = gc;
     bluetooth_manager = bluetooth;
+    wifi_manager = wifi;
+    http_server = http;
     ui_manager = ui;
     
     LOG_BLE("TaskManager: Initializing FreeRTOS task architecture...\n");
@@ -137,6 +145,11 @@ bool TaskManager::create_all_tasks() {
     
     if (!create_bluetooth_task()) {
         LOG_BLE("ERROR: Failed to create bluetooth task\n");
+        return false;
+    }
+
+    if (!create_network_task()) {
+        LOG_BLE("ERROR: Failed to create network task\n");
         return false;
     }
     
@@ -233,6 +246,27 @@ bool TaskManager::create_bluetooth_task() {
     return true;
 }
 
+bool TaskManager::create_network_task() {
+    BaseType_t result = xTaskCreatePinnedToCore(
+        network_task_wrapper,
+        "Network",
+        SYS_TASK_NETWORK_STACK_SIZE,
+        nullptr,
+        SYS_TASK_PRIORITY_NETWORK,
+        &task_handles.network_task,
+        1  // Pin to Core 1
+    );
+
+    if (result != pdPASS) {
+        LOG_BLE("ERROR: Failed to create network task\n");
+        return false;
+    }
+
+    LOG_BLE("✅ Network Task created (Core 1, Priority %d, %dHz)\n",
+            SYS_TASK_PRIORITY_NETWORK, 1000 / SYS_TASK_NETWORK_INTERVAL_MS);
+    return true;
+}
+
 bool TaskManager::create_file_io_task() {
     BaseType_t result = xTaskCreatePinnedToCore(
         file_io_task_wrapper,
@@ -315,6 +349,11 @@ void TaskManager::delete_all_tasks() {
         vTaskDelete(task_handles.bluetooth_task);
         task_handles.bluetooth_task = nullptr;
     }
+
+    if (task_handles.network_task) {
+        vTaskDelete(task_handles.network_task);
+        task_handles.network_task = nullptr;
+    }
     
     if (task_handles.file_io_task) {
         vTaskDelete(task_handles.file_io_task);
@@ -331,7 +370,7 @@ bool TaskManager::validate_hardware_ready() const {
                           grind_controller != nullptr &&
                           bluetooth_manager != nullptr &&
                           ui_manager != nullptr);
-    
+
     if (!hardware_ready) {
         LOG_BLE("TaskManager validation: Hardware interfaces not ready\n");
         return false;
@@ -393,6 +432,14 @@ void TaskManager::bluetooth_task_wrapper(void* parameter) {
     vTaskDelete(nullptr);
 }
 
+void TaskManager::network_task_wrapper(void* parameter) {
+    if (instance) {
+        instance->network_task_impl();
+        instance->task_handles.network_task = nullptr;
+    }
+    vTaskDelete(nullptr);
+}
+
 void TaskManager::file_io_task_wrapper(void* parameter) {
     if (instance) {
         instance->file_io_task_impl();
@@ -433,17 +480,16 @@ void TaskManager::ui_render_task_impl() {
 
         // UI logic and display updates (separated from touch input)
         if (ui_manager) {
-            // Drain BLE UI status messages here to keep LVGL single-threaded
             if (bluetooth_manager) {
                 char status[64];
                 auto* ota = ui_manager->get_ota_data_export_controller();
                 while (ota && bluetooth_manager->dequeue_ui_status(status, sizeof(status))) {
                     ota->update_status(status);
                 }
-                uint8_t remote_action = 0;
-                while (bluetooth_manager->dequeue_remote_grind_command(&remote_action)) {
-                    ui_manager->process_remote_grind_command(remote_action);
-                }
+            }
+            uint8_t remote_action = 0;
+            while (remote_grind_queue.dequeue(&remote_action)) {
+                ui_manager->process_remote_grind_command(remote_action);
             }
             ui_manager->update();
         }
@@ -471,15 +517,36 @@ void TaskManager::bluetooth_task_impl() {
     while (true) {
         uint32_t start_time = millis();
         
-        // Use existing bluetooth manager handle method
         if (bluetooth_manager) {
             bluetooth_manager->handle();
         }
         
         uint32_t end_time = millis();
-        record_task_timing(4, start_time, end_time); // Task index 4 for bluetooth
+        record_task_timing(3, start_time, end_time);
         
-        // Use vTaskDelayUntil for predictable timing
+        vTaskDelayUntil(&xLastWakeTime, xFrequency);
+    }
+}
+
+void TaskManager::network_task_impl() {
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+    const TickType_t xFrequency = pdMS_TO_TICKS(SYS_TASK_NETWORK_INTERVAL_MS);
+
+    LOG_BLE("Network Task started on Core %d\n", xPortGetCoreID());
+
+    while (true) {
+        uint32_t start_time = millis();
+
+        if (wifi_manager) {
+            wifi_manager->handle();
+        }
+        if (http_server) {
+            http_server->handle();
+        }
+
+        uint32_t end_time = millis();
+        record_task_timing(4, start_time, end_time);
+
         vTaskDelayUntil(&xLastWakeTime, xFrequency);
     }
 }
@@ -491,7 +558,7 @@ void TaskManager::file_io_task_impl() {
 
 void TaskManager::record_task_timing(int task_index, uint32_t start_time, uint32_t end_time) {
     if (task_index < 0 || task_index >= 6) return;
-    
+
     TaskMetrics& metrics = task_metrics[task_index];
     uint32_t cycle_duration = end_time - start_time;
     
@@ -508,7 +575,7 @@ void TaskManager::record_task_timing(int task_index, uint32_t start_time, uint32
 #if SYS_ENABLE_REALTIME_HEARTBEAT
     // Print task heartbeat every 10 seconds
     if (end_time - metrics.last_heartbeat_time >= SYS_REALTIME_HEARTBEAT_INTERVAL_MS) {
-        const char* task_names[] = {"WeightSampling", "GrindControl", "UIRender", "Bluetooth", "FileIO"};
+        const char* task_names[] = {"WeightSampling", "GrindControl", "UIRender", "Bluetooth", "Network", "FileIO"};
         print_task_heartbeat(task_index, task_names[task_index]);
         
         // Reset metrics
@@ -538,6 +605,7 @@ bool TaskManager::are_tasks_healthy() const {
            task_handles.grind_control_task &&
            task_handles.ui_render_task &&
            task_handles.bluetooth_task &&
+           task_handles.network_task &&
            task_handles.file_io_task;
 }
 
@@ -550,6 +618,7 @@ void TaskManager::print_task_status() const {
     LOG_BLE("  GrindControl: %s\n", task_handles.grind_control_task ? "RUNNING" : "NULL");
     LOG_BLE("  UIRender: %s\n", task_handles.ui_render_task ? "RUNNING" : "NULL");
     LOG_BLE("  Bluetooth: %s\n", task_handles.bluetooth_task ? "RUNNING" : "NULL");
+    LOG_BLE("  Network: %s\n", task_handles.network_task ? "RUNNING" : "NULL");
     LOG_BLE("  FileIO: %s\n", task_handles.file_io_task ? "RUNNING" : "NULL");
     LOG_BLE("========================\n");
 }

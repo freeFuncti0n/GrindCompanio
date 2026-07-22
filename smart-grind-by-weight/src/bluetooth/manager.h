@@ -26,11 +26,6 @@ struct UIStatusMessage {
     char text[64];
 };
 
-// Remote grind commands marshalled from BLE callback to UI task
-struct RemoteGrindMessage {
-    uint8_t action;
-};
-
 // Debug command enums
 enum BLEDebugCommand {
     BLE_DEBUG_CMD_ENABLE = 0x01,
@@ -129,9 +124,6 @@ private:
     // Queue to marshal UI status messages to UI task context
     QueueHandle_t ui_status_queue;
 
-    // Queue to marshal remote grind commands to UI task context
-    QueueHandle_t remote_grind_queue;
-
     // Diagnostics report control flags
     bool diagnostic_report_pending;
     bool diagnostic_report_in_progress;
@@ -226,6 +218,9 @@ public:
     bool is_data_export_active() const { return data_export_in_progress; }
     float get_data_export_progress() const;
     uint32_t get_data_export_session_count() const;
+
+    /** Session file streaming (shared with WiFi REST export) */
+    DataStreamManager& get_data_stream() { return data_stream; }
 
     /**
      * Log a message to Serial and optionally over BLE

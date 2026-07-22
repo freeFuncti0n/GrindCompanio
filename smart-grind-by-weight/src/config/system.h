@@ -29,6 +29,7 @@
 #define SYS_TASK_GRIND_CONTROL_INTERVAL_MS 20                                  // Grind controller update interval (50Hz) - Core 0
 #define SYS_TASK_UI_INTERVAL_MS 16                                             // UI rendering frequency (60Hz) - Core 1  
 #define SYS_TASK_BLUETOOTH_INTERVAL_MS 20                                      // Bluetooth handling frequency (50Hz) - Core 1
+#define SYS_TASK_NETWORK_INTERVAL_MS 20                                         // WiFi / HTTP / WS frequency (50Hz) - Core 1
 #define SYS_TASK_FILE_IO_INTERVAL_MS 100                                       // File I/O operations frequency (10Hz) - Core 1
 
 // Task Stack Sizes (bytes) - Increased for BLE_LOG overhead and complex operations
@@ -36,6 +37,7 @@
 #define SYS_TASK_GRIND_CONTROL_STACK_SIZE 6144                                 // 6KB stack for grind control logic (was 4KB, increased for complex algorithms)
 #define SYS_TASK_UI_STACK_SIZE 8192                                            // 8KB stack for LVGL rendering (unchanged)
 #define SYS_TASK_BLUETOOTH_STACK_SIZE 4096                                     // 4KB stack for BLE operations (unchanged)
+#define SYS_TASK_NETWORK_STACK_SIZE 8192                                       // 8KB stack for async HTTP/WebSocket
 #define SYS_TASK_FILE_IO_STACK_SIZE 6144                                       // 6KB stack for LittleFS operations (was 4KB, increased for file operations)
 
 // Task Priorities (higher number = higher priority)
@@ -44,6 +46,7 @@
 #define SYS_TASK_PRIORITY_UI 2                                                 // Medium priority (UI updates)
 // Raise BLE above UI to prevent starvation during transfers
 #define SYS_TASK_PRIORITY_BLUETOOTH 3                                          // Higher priority (BLE operations)
+#define SYS_TASK_PRIORITY_NETWORK 2                                            // Medium priority (WiFi REST/WS)
 #define SYS_TASK_PRIORITY_FILE_IO 1                                            // Low priority (file operations)
 
 // Inter-Task Communication Queue Sizes
