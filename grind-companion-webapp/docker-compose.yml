@@ -3,6 +3,7 @@ services:
     build: .
     image: grind-companion-web:latest
     container_name: grind-companion-web
+    # Host port from .env (default 8088). Copy .env.example → .env to customize.
     ports:
-      - "8088:80"
+      - "${WEB_PORT:-8088}:80"
     restart: unless-stopped
