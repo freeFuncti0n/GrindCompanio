@@ -1,6 +1,6 @@
 # WiFi einrichten (v1.4.0 + LAN API)
 
-Diese Anleitung gilt für den Branch **`firmware/v1.4.0-wifi`**: Jaapp-Basis **v1.4.0** plus GrindCompanio-WiFi (REST + WebSocket auf Port **8080**).
+Diese Anleitung gilt für die GrindCompanio-Firmware auf **`main`**: Jaapp-Basis **v1.4.0** plus WiFi (REST + WebSocket auf Port **8080**).
 
 ## Welche Datei bearbeiten?
 
@@ -83,4 +83,4 @@ Vollständig: [`WIFI_API.md`](WIFI_API.md)
 | `No SSID configured` | `wifi_credentials.h` ausfüllen und **neu** flashen |
 | Verbindet nicht | 2,4 GHz prüfen, SSID/Passwort, Nähe zum AP |
 | Keine HTTP-Antwort | WiFi muss connected sein; Port 8080 im LAN freigeben |
-| Vanilla Jaapp | Ohne diesen Branch gibt es **keine** WiFi-API |
+| Vanilla Jaapp | Ohne diese GrindCompanio-Firmware gibt es **keine** WiFi-API |

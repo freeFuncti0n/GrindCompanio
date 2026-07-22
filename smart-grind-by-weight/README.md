@@ -28,7 +28,7 @@ The Smart Grind-by-Weight is a user-friendly, touch interface-driven, highly acc
 
 ### GrindCompanio fork — WiFi LAN API (this repo)
 
-Branch **`firmware/v1.4.0-wifi`**: Jaapp **v1.4.0** + REST/WebSocket on port 8080 for the NAS web companion.
+Jaapp **v1.4.0** + REST/WebSocket on port 8080 for the NAS web companion (on **`main`**).
 
 1. **Edit** [`src/config/wifi_credentials.h`](src/config/wifi_credentials.h) (`WIFI_SSID` / `WIFI_PASSWORD`)
 2. Build/flash — see [`docs/WIFI_SETUP.md`](docs/WIFI_SETUP.md)
