@@ -1,4 +1,4 @@
-﻿# Release binaries â€” firmware/v1.4.0-wifi
+﻿# Release binaries — firmware/v1.4.0-wifi
 
 Built from Jaapp **v1.4.0** + GrindCompanio WiFi LAN API.
 
@@ -8,6 +8,6 @@ Built from Jaapp **v1.4.0** + GrindCompanio WiFi LAN API.
 | partitions.bin | 0x8000 |
 | firmware-v1.4.0-wifi.bin | 0x320000 |
 
-**WiFi credentials:** edit `src/config/wifi_credentials.h`, then re-run `scripts/build-wifi-release.ps1`.
+**WiFi credentials:** edit `src/config/wifi_credentials.h`, then rebuild (e.g. `scripts/build-wifi-release.ps1`) and flash. The shipped `.bin` has empty SSID/password.
 
-Full guide: [docs/WIFI_SETUP.md](../docs/WIFI_SETUP.md)
+Full guide: [docs/WIFI_SETUP.md](../docs/WIFI_SETUP.md) · Quick start: [root README](../../README.md)

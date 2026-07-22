@@ -256,3 +256,102 @@ a {
   border-radius: var(--radius);
   border: 1px solid var(--border);
 }
+
+.journal-form h2 {
+  margin-top: 0;
+}
+
+.journal-hint {
+  margin-top: 0;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 6px 0 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 16px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.chip.accent {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.field-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.field-row .input {
+  flex: 1;
+}
+
+.computed {
+  margin: 0;
+  padding: 12px 0;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.score-row {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 8px;
+}
+
+.score-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.score-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.journal-line {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+
+@media (max-width: 420px) {
+  .field-grid {
+    grid-template-columns: 1fr;
+  }
+}
