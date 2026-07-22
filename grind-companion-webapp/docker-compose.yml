@@ -1,0 +1,8 @@
+services:
+  grind-companion-web:
+    build: .
+    image: grind-companion-web:latest
+    container_name: grind-companion-web
+    ports:
+      - "8088:80"
+    restart: unless-stopped

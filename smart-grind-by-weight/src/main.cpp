@@ -9,6 +9,10 @@
 #include "ui/ui_manager.h"
 #include "config/constants.h"
 #include "bluetooth/manager.h"
+#include "network/wifi_manager.h"
+#include "network/http_server.h"
+#include "network/live_ws_server.h"
+#include "network/remote_grind_queue.h"
 #include "tasks/task_manager.h"
 #include "tasks/weight_sampling_task.h"
 #include "tasks/grind_control_task.h"
@@ -76,6 +80,15 @@ void setup() {
     
     bluetooth_manager.init(hardware_manager.get_preferences());
     bluetooth_manager.set_live_sources(&grind_controller, &hardware_manager);
+
+    wifi_manager.init(hardware_manager.get_preferences());
+    wifi_manager.begin();
+    http_server.init(&wifi_manager,
+                     &bluetooth_manager,
+                     &grind_controller,
+                     &hardware_manager,
+                     &live_ws_server,
+                     &bluetooth_manager.get_data_stream());
     
     // Check for OTA failure to determine initial state
     String failed_ota_build = bluetooth_manager.check_ota_failure_after_boot();
@@ -126,7 +139,8 @@ void setup() {
     // Initialize TaskManager with hardware and system interfaces
     LOG_BLE("[STARTUP] Initializing FreeRTOS Task Architecture...\n");
     bool task_init_success = task_manager.init(&hardware_manager, &state_machine, &profile_controller, 
-                                              &grind_controller, &bluetooth_manager, &ui_manager);
+                                              &grind_controller, &bluetooth_manager, &ui_manager,
+                                              &wifi_manager, &http_server);
     
     if (!task_init_success) {
         LOG_BLE("ERROR: Failed to initialize TaskManager - system cannot start\n");

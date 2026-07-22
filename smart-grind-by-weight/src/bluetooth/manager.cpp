@@ -10,7 +10,8 @@
 #include "../system/performance_monitor.h"
 #include "../system/statistics_manager.h"
 #include "../system/diagnostics_controller.h"
-#include "../config/constants.h"
+#include "../network/remote_grind_queue.h"
+#include "../network/live_telemetry.h"
 #include "../config/user.h"
 #include "../config/grind_control.h"
 #include "../config/build_info.h"
@@ -60,7 +61,6 @@ BluetoothManager::BluetoothManager()
     , last_session_storage_version(0)
     , last_reported_export_state(false)
     , ui_status_queue(nullptr)
-    , remote_grind_queue(nullptr)
     , diagnostic_report_pending(false)
     , diagnostic_report_in_progress(false) {
 }
@@ -76,9 +76,7 @@ void BluetoothManager::init(Preferences* prefs) {
     if (!ui_status_queue) {
         ui_status_queue = xQueueCreate(8, sizeof(UIStatusMessage));
     }
-    if (!remote_grind_queue) {
-        remote_grind_queue = xQueueCreate(4, sizeof(RemoteGrindMessage));
-    }
+    remote_grind_queue.init();
 }
 
 void BluetoothManager::set_ui_status_callback(UIStatusCallback callback) {
@@ -114,21 +112,12 @@ bool BluetoothManager::dequeue_ui_status(char* out, size_t out_len) {
 }
 
 void BluetoothManager::enqueue_remote_grind_command(uint8_t action) {
-    if (!remote_grind_queue) return;
     if (ota_handler.is_ota_active() || data_export_in_progress) return;
-    RemoteGrindMessage msg;
-    msg.action = action;
-    xQueueSend(remote_grind_queue, &msg, 0);
+    remote_grind_queue.enqueue(action);
 }
 
 bool BluetoothManager::dequeue_remote_grind_command(uint8_t* out_action) {
-    if (!remote_grind_queue || !out_action) return false;
-    RemoteGrindMessage msg;
-    if (xQueueReceive(remote_grind_queue, &msg, 0) == pdPASS) {
-        *out_action = msg.action;
-        return true;
-    }
-    return false;
+    return remote_grind_queue.dequeue(out_action);
 }
 
 void BluetoothManager::enable(unsigned long timeout_ms) {
@@ -988,28 +977,10 @@ void BluetoothManager::update_live_telemetry() {
     if (now - last_live_telemetry_ms < BLE_LIVE_TELEMETRY_INTERVAL_MS) return;
     last_live_telemetry_ms = now;
 
-    WeightSensor* sensor = hardware_manager_ref->get_weight_sensor();
-    Grinder* grinder = hardware_manager_ref->get_grinder();
-    if (!sensor) return;
-
-    float weight_g = sensor->get_weight_low_latency();
-    float flow_g_s = grind_controller_ref->get_current_flow_rate();
-    float target_g = grind_controller_ref->get_target_weight();
-    uint8_t progress = static_cast<uint8_t>(std::clamp(grind_controller_ref->get_progress_percent(), 0, 100));
-    uint8_t phase_id = grind_controller_ref->get_current_phase_id();
-    uint8_t profile_id = grind_controller_ref->get_profile_id();
-    uint8_t grind_mode = static_cast<uint8_t>(grind_controller_ref->get_mode());
-    uint8_t motor_on = (grinder && grinder->is_grinding()) ? 1 : 0;
-
-    uint8_t payload[BLE_LIVE_PAYLOAD_BYTES] = {0};
-    memcpy(payload + 0, &weight_g, sizeof(float));
-    memcpy(payload + 4, &flow_g_s, sizeof(float));
-    memcpy(payload + 8, &target_g, sizeof(float));
-    payload[12] = progress;
-    payload[13] = phase_id;
-    payload[14] = profile_id;
-    payload[15] = grind_mode;
-    payload[16] = motor_on;
+    uint8_t payload[BLE_LIVE_PAYLOAD_BYTES];
+    if (!build_live_telemetry_payload(grind_controller_ref, hardware_manager_ref, payload, sizeof(payload))) {
+        return;
+    }
 
     live_telemetry_characteristic->setValue(payload, BLE_LIVE_PAYLOAD_BYTES);
     live_telemetry_characteristic->notify();

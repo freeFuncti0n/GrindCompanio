@@ -26,6 +26,16 @@ The Smart Grind-by-Weight is a user-friendly, touch interface-driven, highly acc
 
 **The concept is simple:** Perform a "brain swap" on your grinder. Replace the original controller with our intelligent ESP32-S3 controller and add a precision load cell to the mix.
 
+### GrindCompanio fork — WiFi LAN API (this repo)
+
+Branch **`firmware/v1.4.0-wifi`**: Jaapp **v1.4.0** + REST/WebSocket on port 8080 for the NAS web companion.
+
+1. **Edit** [`src/config/wifi_credentials.h`](src/config/wifi_credentials.h) (`WIFI_SSID` / `WIFI_PASSWORD`)
+2. Build/flash — see [`docs/WIFI_SETUP.md`](docs/WIFI_SETUP.md)
+3. Prebuilt images: [`release/`](release/)
+
+---
+
 **Upgrade cost:** €30-40 in parts  
 **Target accuracy:** ±0.03g tolerance  
 **No regrets**: No permanent modifications, and original grind-by-time mode is also available
@@ -40,6 +50,7 @@ The Smart Grind-by-Weight is a user-friendly, touch interface-driven, highly acc
 - **Zero-shot learning**: Algorithm adapts instantly to any grind size, bean setting, humidity etc. without manual tuning
 - **Original timed run preserved** – there is a setting to enable the original Grind-By-Time mode
 - **BLE OTA updates** for firmware
+- **WiFi LAN API** for Grind Companion (REST remote grind + WebSocket live telemetry) — see [docs/WIFI_API.md](docs/WIFI_API.md)
 - **Advanced analytics** using BLE data transfer and Python Streamlit reports
 - **For Eureka**: No permanent modifications needed - just swap the screen and add 3D printed parts
 
