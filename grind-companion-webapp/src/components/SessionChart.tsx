@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 type Point = { t: number; weight: number; flow: number };
 
 type Props = {
@@ -6,8 +8,9 @@ type Props = {
 };
 
 export function SessionChart({ points, height = 160 }: Props) {
+  const { t } = useTranslation();
   if (points.length < 2) {
-    return <div className="chart-empty">Keine Live-Daten</div>;
+    return <div className="chart-empty">{t('chart.empty')}</div>;
   }
   const w = 360;
   const h = height;

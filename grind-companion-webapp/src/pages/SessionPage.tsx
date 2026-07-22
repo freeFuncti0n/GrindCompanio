@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { getEvents, getMeasurements, getSession } from '../db/database';
 import type { GrindEvent, GrindMeasurement, GrindSession } from '../parsing/types';
 import { SessionChart } from '../components/SessionChart';
 import { SessionJournalForm } from '../components/SessionJournalForm';
-import { MODE_MAP, PROFILE_MAP, TERMINATION_REASON_MAP } from '../parsing/types';
+import { useEnumLabels } from '../i18n/useEnumLabels';
 
 export function SessionPage() {
+  const { t } = useTranslation();
+  const { profile, mode, termination } = useEnumLabels();
   const { id } = useParams();
   const sessionId = Number(id);
   const [session, setSession] = useState<GrindSession | null>(null);
@@ -32,7 +35,7 @@ export function SessionPage() {
     return (
       <div className="page">
         <p className="muted">
-          Session nicht gefunden. <Link to="/analytics">Zurück</Link>
+          {t('session.notFound')} <Link to="/analytics">{t('common.back')}</Link>
         </p>
       </div>
     );
@@ -43,17 +46,21 @@ export function SessionPage() {
   return (
     <div className="page">
       <p>
-        <Link to="/analytics">← Analytics</Link>
+        <Link to="/analytics">{t('common.backToAnalytics')}</Link>
       </p>
-      <h1>Session #{session.session_id}</h1>
+      <h1>{t('session.title', { id: session.session_id })}</h1>
       <p className="muted">
-        {PROFILE_MAP[session.profile_id] ?? session.profile_id} ·{' '}
-        {MODE_MAP[session.grind_mode] ?? session.grind_mode} ·{' '}
-        {TERMINATION_REASON_MAP[session.termination_reason] ?? session.termination_reason}
+        {profile(session.profile_id)} · {mode(session.grind_mode)} ·{' '}
+        {termination(session.termination_reason)}
       </p>
       <p className="muted">
-        {session.final_weight.toFixed(2)} g (Ziel {session.target_weight.toFixed(2)} g) · Error{' '}
-        {session.error_grams.toFixed(2)} g · {events.length} Events · {measurements.length} Samples
+        {t('session.stats', {
+          final: session.final_weight.toFixed(2),
+          target: session.target_weight.toFixed(2),
+          error: session.error_grams.toFixed(2),
+          events: events.length,
+          samples: measurements.length,
+        })}
       </p>
 
       <SessionChart points={chartPoints} height={200} />

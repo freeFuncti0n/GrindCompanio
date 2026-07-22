@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   createBean,
   getLastJournalDefaults,
@@ -21,7 +22,6 @@ import {
 
 type Props = {
   sessionId: number;
-  /** Dose from synced WiFi session (final_weight / target), not BLE live. */
   doseG: number;
 };
 
@@ -33,6 +33,7 @@ function parseOptionalNumber(text: string): number | null {
 }
 
 export function SessionJournalForm({ sessionId, doseG }: Props) {
+  const { t } = useTranslation();
   const [beans, setBeans] = useState<Bean[]>([]);
   const [beanId, setBeanId] = useState<number | null>(null);
   const [grindSetting, setGrindSetting] = useState('');
@@ -103,10 +104,10 @@ export function SessionJournalForm({ sessionId, doseG }: Props) {
         taste_score: tasteScore,
         notes: notes.trim() || null,
       });
-      setStatus('Gespeichert');
+      setStatus(t('journal.saved'));
       setBeans(await listBeans());
     } catch (e) {
-      setStatus(e instanceof Error ? e.message : 'Speichern fehlgeschlagen');
+      setStatus(e instanceof Error ? e.message : t('journal.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -123,14 +124,19 @@ export function SessionJournalForm({ sessionId, doseG }: Props) {
 
   return (
     <div className="card journal-form">
-      <h2>Journal</h2>
+      <h2>{t('journal.title')}</h2>
       <p className="muted journal-hint">
-        Dosis aus WiFi-Session: {doseG.toFixed(2)} g · Ziel Bezugszeit {TARGET_BREW_TIME_MIN_S}–
-        {TARGET_BREW_TIME_MAX_S} s · Ratio {TARGET_RATIO_MIN}–{TARGET_RATIO_MAX} · Score ≥{' '}
-        {TARGET_TASTE_MIN}
+        {t('journal.hint', {
+          dose: doseG.toFixed(2),
+          brewMin: TARGET_BREW_TIME_MIN_S,
+          brewMax: TARGET_BREW_TIME_MAX_S,
+          ratioMin: TARGET_RATIO_MIN,
+          ratioMax: TARGET_RATIO_MAX,
+          scoreMin: TARGET_TASTE_MIN,
+        })}
       </p>
 
-      <label className="label">Bohne</label>
+      <label className="label">{t('journal.bean')}</label>
       <div className="chip-row">
         {beans.map((b) => {
           const active = beanId === b.id;
@@ -146,10 +152,10 @@ export function SessionJournalForm({ sessionId, doseG }: Props) {
           );
         })}
         <button type="button" className="chip accent" onClick={() => setShowNewBean((v) => !v)}>
-          + Neu
+          {t('journal.new')}
         </button>
         <Link className="chip" to="/beans">
-          Alle
+          {t('journal.all')}
         </Link>
       </div>
 
@@ -157,19 +163,19 @@ export function SessionJournalForm({ sessionId, doseG }: Props) {
         <div className="field-row">
           <input
             className="input"
-            placeholder="Bohnenname"
+            placeholder={t('journal.beanNamePlaceholder')}
             value={newBeanName}
             onChange={(e) => setNewBeanName(e.target.value)}
           />
           <button className="btn primary" type="button" onClick={() => void onCreateBean()}>
-            Anlegen
+            {t('journal.create')}
           </button>
         </div>
       ) : null}
 
       <div className="field-grid">
         <div>
-          <label className="label">Mahlgrad (Dial)</label>
+          <label className="label">{t('journal.grindSetting')}</label>
           <input
             className="input"
             inputMode="decimal"
@@ -179,7 +185,7 @@ export function SessionJournalForm({ sessionId, doseG }: Props) {
           />
         </div>
         <div>
-          <label className="label">Bezugszeit (s)</label>
+          <label className="label">{t('journal.brewTime')}</label>
           <input
             className="input"
             inputMode="decimal"
@@ -192,7 +198,7 @@ export function SessionJournalForm({ sessionId, doseG }: Props) {
 
       <div className="field-grid">
         <div>
-          <label className="label">Ausgabe (g)</label>
+          <label className="label">{t('journal.yield')}</label>
           <input
             className="input"
             inputMode="decimal"
@@ -202,22 +208,22 @@ export function SessionJournalForm({ sessionId, doseG }: Props) {
           />
         </div>
         <div>
-          <label className="label">Dosis / Ratio</label>
+          <label className="label">{t('journal.doseRatio')}</label>
           <p className="computed">
-            {doseG.toFixed(2)} g · {formatRatio(ratio)}
+            {t('journal.doseRatioValue', { dose: doseG.toFixed(2), ratio: formatRatio(ratio) })}
           </p>
         </div>
       </div>
 
-      <label className="label">Korb</label>
+      <label className="label">{t('journal.basket')}</label>
       <input
         className="input"
-        placeholder="18g VST"
+        placeholder={t('journal.basketPlaceholder')}
         value={basket}
         onChange={(e) => setBasket(e.target.value)}
       />
 
-      <label className="label">Geschmack</label>
+      <label className="label">{t('journal.taste')}</label>
       <div className="score-row">
         {[1, 2, 3, 4, 5].map((n) => {
           const active = tasteScore === n;
@@ -236,30 +242,30 @@ export function SessionJournalForm({ sessionId, doseG }: Props) {
 
       {brewTimeN != null && ratio != null && tasteScore != null ? (
         <p className={targetHit ? 'success' : 'muted'}>
-          {targetHit ? 'Ziel getroffen' : 'Außerhalb Zielkorridor'}
+          {targetHit ? t('journal.targetHit') : t('journal.targetMiss')}
         </p>
       ) : null}
 
-      <label className="label">Mahlgrad-Notiz</label>
+      <label className="label">{t('journal.grindNote')}</label>
       <input
         className="input"
-        placeholder="fein nachgezogen"
+        placeholder={t('journal.grindNotePlaceholder')}
         value={grindNote}
         onChange={(e) => setGrindNote(e.target.value)}
       />
 
-      <label className="label">Notiz</label>
+      <label className="label">{t('journal.notes')}</label>
       <textarea
         className="input"
         rows={3}
-        placeholder="Geschmack, Channeling, …"
+        placeholder={t('journal.notesPlaceholder')}
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
       />
 
       <div className="actions">
         <button className="btn primary" type="button" disabled={saving} onClick={() => void onSave()}>
-          {saving ? '…' : 'Journal speichern'}
+          {saving ? t('journal.saving') : t('journal.save')}
         </button>
         {status ? <span className="success">{status}</span> : null}
       </div>
