@@ -6,8 +6,6 @@ Erweiterung zu [smart-grind-by-weight](https://github.com/jaapp/smart-grind-by-w
 
 Monorepo: **Web-Companion** + ESP32-Firmware mit WiFi-LAN-API für Eureka Grind-by-Weight.
 
-> **Hinweis:** Die frühere Expo-App (iOS/Android) wird nicht mehr mitgeführt. Empfohlen ist die **Web-App** im Browser (NAS/Docker oder lokal). Live-Daten und Fernsteuerung laufen über **WiFi** (REST + WebSocket), nicht über BLE.
-
 ---
 
 ## Was brauche ich?
