@@ -1,0 +1,14 @@
+---
+description: Git commits — only freeFuncti0n, never Co-authored-by
+alwaysApply: true
+---
+
+# Git identity & commits
+
+- **Author and committer must be only:** `freeFuncti0n <86571209+freeFuncti0n@users.noreply.github.com>`
+- **Never** add `Co-authored-by:` trailers (not Cursor, not anyone else).
+- This repo uses `.githooks/` — do not bypass hooks unless fixing hook setup.
+- When creating commits for the user:
+  - Use repo-local identity (already in `.git/config`).
+  - Keep commit messages short; no co-author lines.
+  - If a commit message contains `Co-authored-by`, amend or recreate the commit without it before pushing.
