@@ -5,9 +5,9 @@ This monorepo contains multiple components under different licenses.
 When distributing or publishing parts of this repository, apply the
 license that covers the respective directory.
 
-1) grind-companion/ (Companion mobile app)
-   Copyright (c) 2026 freeFuncti0n
-   Licensed under the MIT License — see grind-companion/LICENSE
+1) grind-companion-webapp/ (Browser companion)
+   Copyright (c) freeFuncti0n
+   Licensed under the MIT License — see grind-companion-webapp/LICENSE
 
 2) smart-grind-by-weight/ (ESP32 firmware, hardware docs, 3D files)
    Derived from smart-grind-by-weight by jaapp and contributors.

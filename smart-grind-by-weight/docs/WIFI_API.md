@@ -96,12 +96,9 @@ While a grind is active, the server broadcasts **20-byte binary frames** at ~20 
 Then rebuild/flash. Step-by-step: [`WIFI_SETUP.md`](WIFI_SETUP.md)  
 Prebuilt binaries (empty SSID): [`release/`](../release/)
 
-### Native app (BLE + WiFi)
+### Web companion
 
-In **Connect**, choose **WiFi (LAN)**, enter the grinder IP. BLE remains available.
-
-### Web app on NAS (WiFi only)
-
-See [`grind-companion-webapp/`](../../grind-companion-webapp/README.md).
+Browser UI (WiFi only): [`grind-companion-webapp/`](../../grind-companion-webapp/README.md).
+Deploy on a NAS or run locally; the browser talks directly to the ESP on the LAN.
 
 

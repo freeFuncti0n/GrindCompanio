@@ -6,14 +6,14 @@ Danke für dein Interesse an GrindCompanio!
 
 - Lies [DISCLAIMER.md](DISCLAIMER.md) und [LICENSE](LICENSE).
 - Firmware-Änderungen unterliegen **GPL-3.0** (siehe `smart-grind-by-weight/LICENSE`).
-- App-Änderungen unterliegen **MIT** (siehe `grind-companion/LICENSE`).
+- Web-App-Änderungen unterliegen **MIT** (siehe `grind-companion-webapp/LICENSE`).
 
 ## Pull Requests
 
 1. Fork → Branch → klare Commit-Messages
-2. `grind-companion`: `npm run typecheck` und `npm run test:parser`
+2. Web-App: `cd grind-companion-webapp && npm run typecheck && npm run build`
 3. Firmware: `python3 tools/grinder.py build` im Ordner `smart-grind-by-weight/tools`
-4. Keine Secrets (.env, Keys, persönliche Pfade) committen
+4. Keine Secrets (.env, WLAN-Passwörter in `wifi_credentials.h`, persönliche Pfade) committen
 
 ## Upstream-Firmware
 
