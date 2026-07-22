@@ -149,7 +149,11 @@ export function JournalEntryForm({ entryId, sessionId, defaultDoseG, onSaved }: 
       };
 
       if (resolvedEntryId != null) {
-        await updateJournalEntry({ id: resolvedEntryId, ...payload, session_id: sessionId ?? null });
+        await updateJournalEntry({
+          id: resolvedEntryId,
+          ...payload,
+          ...(sessionId != null ? { session_id: sessionId } : {}),
+        });
       } else if (sessionId != null) {
         const saved = await upsertJournalForSession(sessionId, payload);
         setResolvedEntryId(saved.id);
