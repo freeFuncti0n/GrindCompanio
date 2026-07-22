@@ -1,6 +1,6 @@
-﻿# Release binaries — firmware/v1.4.0-wifi
+﻿# Release binaries — v1.4.0 WiFi
 
-Built from Jaapp **v1.4.0** + GrindCompanio WiFi LAN API.
+Built from Jaapp **v1.4.0** + GrindCompanio WiFi LAN API (`main`).
 
 | File | Flash offset |
 |------|----------------|

@@ -6,14 +6,14 @@ Erweiterung zu [smart-grind-by-weight](https://github.com/jaapp/smart-grind-by-w
 
 Monorepo: **Web-Companion** + ESP32-Firmware mit WiFi-LAN-API für Eureka Grind-by-Weight.
 
-> **Hinweis:** Die frühere Expo-App (iOS/Android) wird nicht weiterentwickelt. Empfohlen ist die **Web-App** im Browser (NAS/Docker oder lokal). Live-Daten und Fernsteuerung laufen über **WiFi** (REST + WebSocket), nicht über BLE.
+> **Hinweis:** Die frühere Expo-App (iOS/Android) wird nicht mehr mitgeführt. Empfohlen ist die **Web-App** im Browser (NAS/Docker oder lokal). Live-Daten und Fernsteuerung laufen über **WiFi** (REST + WebSocket), nicht über BLE.
 
 ---
 
 ## Was brauche ich?
 
 1. Waveshare ESP32-S3 Touch AMOLED (wie Upstream Jaapp)
-2. Branch **`firmware/v1.4.0-wifi`** (oder die Release-Binaries darunter)
+2. Diese Firmware (Jaapp **v1.4.0** + GrindCompanio WiFi-API) — Quellcode oder Release-Binaries unter [`smart-grind-by-weight/release/`](smart-grind-by-weight/release/)
 3. 2,4‑GHz‑WLAN (ESP32-S3 kann kein 5 GHz)
 4. Optional: Browser-UI auf einer NAS (`grind-companion-webapp`)
 
@@ -73,7 +73,7 @@ Build-Skript: [`smart-grind-by-weight/scripts/build-wifi-release.ps1`](smart-gri
 
 Ausführlich: [`smart-grind-by-weight/docs/WIFI_SETUP.md`](smart-grind-by-weight/docs/WIFI_SETUP.md) · API: [`WIFI_API.md`](smart-grind-by-weight/docs/WIFI_API.md)
 
-**Vanilla Jaapp v1.4.0 hat keine WiFi-API** — ohne diesen Fork funktioniert die Web-App nicht.
+**Vanilla Jaapp v1.4.0 hat keine WiFi-API** — ohne diese GrindCompanio-Firmware funktioniert die Web-App nicht.
 
 ---
 
@@ -110,14 +110,12 @@ Journal und Diagnose nutzen die **gesyncten WiFi-Sessions** (Dosis = `final_weig
 
 ## Repo-Struktur
 
-| Ordner | Status |
-|--------|--------|
-| [`grind-companion-webapp/`](grind-companion-webapp/) | **Aktiv** — Browser-Companion (WiFi) |
-| [`smart-grind-by-weight/`](smart-grind-by-weight/) | **Aktiv** — Firmware v1.4.0 + WiFi-API |
-| [`grind-companion-ios/`](grind-companion-ios/) | **Eingestellt** — Expo BLE/WiFi, nicht empfohlen |
-| `grind-companion/` | Legacy-Pfad (historisch) |
+| Ordner | Beschreibung |
+|--------|--------------|
+| [`grind-companion-webapp/`](grind-companion-webapp/) | Browser-Companion (WiFi) — **empfohlen** |
+| [`smart-grind-by-weight/`](smart-grind-by-weight/) | Firmware v1.4.0 + WiFi-API + Release-Binaries |
 
-Branch: **`firmware/v1.4.0-wifi`**
+Entwicklung und Releases laufen auf **`main`**.
 
 ---
 
