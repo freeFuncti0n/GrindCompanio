@@ -119,20 +119,6 @@ function getDb() {
   return dbPromise;
 }
 
-async function nextJournalId(db: IDBPDatabase<GrindCompanionDB>): Promise<number> {
-  const row = await db.get('meta_kv', 'nextJournalId');
-  const next = (row?.value ?? 1) as number;
-  await db.put('meta_kv', { key: 'nextJournalId', value: next + 1 });
-  return next;
-}
-
-async function nextBeanId(db: IDBPDatabase<GrindCompanionDB>): Promise<number> {
-  const row = await db.get('meta_kv', 'nextBeanId');
-  const next = (row?.value ?? 1) as number;
-  await db.put('meta_kv', { key: 'nextBeanId', value: next + 1 });
-  return next;
-}
-
 function enrichJournalRows(
   entries: JournalEntry[],
   beans: Bean[],
@@ -234,7 +220,11 @@ export async function createBean(input: {
   roast_level?: number | null;
 }): Promise<Bean> {
   const db = await getDb();
-  const id = await nextBeanId(db);
+  const tx = db.transaction(['meta_kv', 'beans'], 'readwrite');
+  const counters = tx.objectStore('meta_kv');
+  const row = await counters.get('nextBeanId');
+  const id = row?.value ?? 1;
+  await counters.put({ key: 'nextBeanId', value: id + 1 });
   const bean: Bean = {
     id,
     name: input.name.trim(),
@@ -243,7 +233,8 @@ export async function createBean(input: {
     roast_level: input.roast_level ?? null,
     created_at: Math.floor(Date.now() / 1000),
   };
-  await db.put('beans', bean);
+  await tx.objectStore('beans').add(bean);
+  await tx.done;
   return bean;
 }
 
@@ -278,7 +269,11 @@ export async function createJournalEntry(
   input: Omit<JournalEntryInput, 'session_id'> & { session_id?: number | null }
 ): Promise<JournalEntry> {
   const db = await getDb();
-  const id = await nextJournalId(db);
+  const tx = db.transaction(['meta_kv', 'journal_entries'], 'readwrite');
+  const counters = tx.objectStore('meta_kv');
+  const row = await counters.get('nextJournalId');
+  const id = row?.value ?? 1;
+  await counters.put({ key: 'nextJournalId', value: id + 1 });
   const now = Math.floor(Date.now() / 1000);
   const entry: JournalEntry = {
     id,
@@ -297,7 +292,8 @@ export async function createJournalEntry(
     created_at: now,
     updated_at: now,
   };
-  await db.put('journal_entries', entry);
+  await tx.objectStore('journal_entries').add(entry);
+  await tx.done;
   return entry;
 }
 
