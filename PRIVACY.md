@@ -1,52 +1,51 @@
-# Datenschutz (Grind Companion Web)
+# Privacy (Grind Companion Web)
 
-Stand: 2026
+Last updated: 2026
 
-## Kurzfassung
+## Summary
 
-Die **Web-App** speichert Daten **lokal im Browser** (IndexedDB). Es gibt
-**keinen Cloud-Backend-Server** dieses Projekts und **kein Tracking**
-durch die Projektautoren.
+The **web app** stores data **locally in the browser** (IndexedDB). There is
+**no cloud backend** from this project and **no tracking** by the project authors.
 
-## Welche Daten verarbeitet werden?
+## What data is processed?
 
-| Daten | Wo | Zweck |
-|-------|-----|--------|
-| Mahl-Sessions (Gewicht, Flow, Zeiten) | IndexedDB im Browser | Analytics, Session-Details |
-| Espresso-Tagebuch (Bohne, Dial, Notizen) | IndexedDB im Browser | Auswertung, Diagnose |
-| ESP-IP-Adresse | `localStorage` im Browser | Verbindung zum Mühlen-ESP |
-| Sprache (DE/EN) | `localStorage` im Browser | UI-Sprache |
+| Data | Where | Purpose |
+|------|--------|---------|
+| Grind sessions (weight, flow, timings) | Browser IndexedDB | Analytics, session details |
+| Espresso journal (bean, dial, notes) | Browser IndexedDB | Analysis, diagnose |
+| ESP IP address | Browser `localStorage` | Connection to the grinder ESP |
+| Language (DE/EN) | Browser `localStorage` | UI language |
 
-## Netzwerk
+## Networking
 
-Die Web-App spricht **direkt** mit deinem ESP im lokalen WLAN (HTTP Port 8080,
-WebSocket für Live-Daten). Dieser Datenverkehr läuft **nicht** über Server des
-Projektautors — nur zwischen Browser und Mühle im LAN.
+The web app talks **directly** to your ESP on the local Wi‑Fi (HTTP port 8080,
+WebSocket for live data). This traffic does **not** go through the project
+author’s servers — only between browser and grinder on the LAN.
 
-Wenn die UI auf einer NAS gehostet wird, lädt der Browser nur statische Dateien
-(HTML/JS/CSS) von dort. Die API-Anfragen gehen weiterhin direkt an den ESP.
+If the UI is hosted on a NAS, the browser only loads static files (HTML/JS/CSS)
+from there. API requests still go directly to the ESP.
 
-## Was wird nicht gemacht?
+## What we do not do
 
-- Kein Upload an Server des Projektautors
-- Kein Analytics-/Crash-Reporting SDK (Stand dieser Codebasis)
-- Keine Weitergabe an Dritte durch die Web-App selbst
+- No upload to the project author’s servers
+- No analytics / crash-reporting SDK (as of this codebase)
+- No third-party sharing by the web app itself
 
 ## Firmware & BLE
 
-Die ESP-Firmware kann weiterhin **Bluetooth** nutzen (OTA, Export am Gerät).
-Die Web-App verwendet **WiFi**, nicht BLE. Bluetooth-Berechtigungen des
-Browsers sind für diese Web-App nicht erforderlich.
+The ESP firmware may still use **Bluetooth** (OTA, on-device export).
+The web app uses **Wi‑Fi**, not BLE. Browser Bluetooth permissions are
+not required for this web app.
 
-## Deine Rechte
+## Your rights
 
-Du kannst alle lokalen Daten löschen durch:
+You can delete all local data by:
 
-- Löschen der Website-Daten / IndexedDB im Browser
-- oder privates Fenster ohne Persistenz nutzen
+- Clearing site data / IndexedDB in the browser, or
+- Using a private window without persistence
 
-## Kontakt
+## Contact
 
-Projekt: https://github.com/freeFuncti0n/GrindCompanio
+Project: https://github.com/freeFuncti0n/GrindCompanio
 
-Bei Fragen zum Datenschutz: Issue im GitHub-Repository eröffnen.
+For privacy questions: open an issue in the GitHub repository.

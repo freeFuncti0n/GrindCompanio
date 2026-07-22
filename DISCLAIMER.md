@@ -1,32 +1,31 @@
-# Haftungsausschluss
+# Disclaimer
 
-## Experimentelles Projekt
+## Experimental project
 
-GrindCompanio erweitert ein **experimentelles Open-Source-Mühlen-Mod**
-(smart-grind-by-weight). Der Betrieb erfolgt auf **eigene Verantwortung**.
+GrindCompanio extends an **experimental open-source grinder mod**
+(smart-grind-by-weight). You operate it **at your own risk**.
 
-## Hardware & Sicherheit
+## Hardware & safety
 
-- Arbeiten an **230-V-Geräten** und Motorrelais erfordern Fachkenntnisse.
-- Fehlerhafte Verdrahtung kann **Personenschäden, Brand oder Geräteschäden** verursachen.
-- 3D-Druckteile, Loadcell und ESP-Installation müssen mechanisch und elektrisch sicher sein.
-- Die Autoren übernehmen **keine Haftung** für Schäden aus Bau, Betrieb oder Modifikation.
+- Work on **mains-voltage (e.g. 230 V) equipment** and motor relays requires expertise.
+- Incorrect wiring can cause **injury, fire, or equipment damage**.
+- 3D-printed parts, the load cell, and the ESP installation must be mechanically and electrically safe.
+- The authors accept **no liability** for damage arising from building, operating, or modifying the project.
 
 ## Software
 
-Die Software wird **ohne Gewähr** („AS IS“) bereitgestellt — siehe jeweilige
-[Lizenzen](LICENSE). Es gibt keine Garantie für:
+The software is provided **AS IS**, without warranty — see the applicable
+[licenses](LICENSE). There is no guarantee of:
 
-- Mahlgenauigkeit oder Espresso-Qualität
-- WLAN-/WebSocket-Stabilität in jedem Heimnetz
-- Kompatibilität mit zukünftigen Firmware-Versionen
+- Grind accuracy or espresso quality
+- Wi‑Fi / WebSocket stability on every home network
+- Compatibility with future firmware versions
 
-## Gesundheit & Lebensmittel
+## Health & food
 
-Das Projekt dient der Kaffeezubereitung. Keine medizinischen oder
-ernährungswissenschaftlichen Aussagen.
+This project is for coffee preparation. It makes no medical or nutritional claims.
 
-## Marken
+## Trademarks
 
-Eureka und andere Markennamen gehören ihren Rechtsinhabern. Dieses Projekt
-steht **nicht in Verbindung** mit Eureka oder anderen Herstellern.
+Eureka and other brand names belong to their respective owners. This project is
+**not affiliated with** Eureka or any other manufacturer.

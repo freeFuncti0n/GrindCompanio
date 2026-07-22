@@ -1,26 +1,26 @@
 # Contributing
 
-Danke für dein Interesse an GrindCompanio!
+Thanks for your interest in GrindCompanio!
 
-## Bevor du startest
+## Before you start
 
-- Lies [DISCLAIMER.md](DISCLAIMER.md) und [LICENSE](LICENSE).
-- Firmware-Änderungen unterliegen **GPL-3.0** (siehe `smart-grind-by-weight/LICENSE`).
-- Web-App-Änderungen unterliegen **MIT** (siehe `grind-companion-webapp/LICENSE`).
+- Read [DISCLAIMER.md](DISCLAIMER.md) and [LICENSE](LICENSE).
+- Firmware changes are under **GPL-3.0** (see `smart-grind-by-weight/LICENSE`).
+- Web app changes are under **MIT** (see `grind-companion-webapp/LICENSE`).
 
 ## Pull Requests
 
-1. Fork → Branch → klare Commit-Messages
-2. Web-App: `cd grind-companion-webapp && npm run typecheck && npm run build`
-3. Firmware: `python3 tools/grinder.py build` im Ordner `smart-grind-by-weight/tools`
-4. Keine Secrets (.env, WLAN-Passwörter in `wifi_credentials.h`, persönliche Pfade) committen
+1. Fork → branch → clear commit messages
+2. Web app: `cd grind-companion-webapp && npm run typecheck && npm run build`
+3. Firmware: `python3 tools/grinder.py build` in `smart-grind-by-weight/tools`
+4. Do not commit secrets (`.env`, Wi‑Fi passwords in `wifi_credentials.h`, personal paths)
 
-## Upstream-Firmware
+## Upstream firmware
 
-Substantielle Firmware-Fixes, die dem Original zugutekommen, können auch an
-[jaapp/smart-grind-by-weight](https://github.com/jaapp/smart-grind-by-weight)
-weitergegeben werden.
+Substantial firmware fixes that benefit the original project can also be
+submitted upstream to
+[jaapp/smart-grind-by-weight](https://github.com/jaapp/smart-grind-by-weight).
 
 ## Code of Conduct
 
-Respektvoller Umgang. Keine Belästigung, kein Spam.
+Be respectful. No harassment, no spam.
