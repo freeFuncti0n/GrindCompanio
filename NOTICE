@@ -26,13 +26,14 @@ Algorithms / drivers:
   HX711 bit-bang timing derived from HX711_ADC by Olav Kallhovd (MIT)
   — see smart-grind-by-weight/src/hardware/hx711_driver.cpp
 
-Companion app (grind-companion/)
---------------------------------
+Web companion (grind-companion-webapp/)
+---------------------------------------
 
-Runtime dependencies (see grind-companion/package-lock.json):
-  Expo, React, React Native — MIT
-  react-native-ble-plx — MIT
-  expo-sqlite — MIT
+Runtime dependencies (see grind-companion-webapp/package-lock.json):
+  React, Vite — MIT
+  react-router-dom — MIT
+  i18next, react-i18next — MIT
+  idb — ISC
   zustand — MIT
   and other npm packages as declared in package-lock.json
 

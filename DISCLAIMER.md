@@ -18,7 +18,7 @@ Die Software wird **ohne Gewähr** („AS IS“) bereitgestellt — siehe jeweil
 [Lizenzen](LICENSE). Es gibt keine Garantie für:
 
 - Mahlgenauigkeit oder Espresso-Qualität
-- BLE-Stabilität auf allen Geräten
+- WLAN-/WebSocket-Stabilität in jedem Heimnetz
 - Kompatibilität mit zukünftigen Firmware-Versionen
 
 ## Gesundheit & Lebensmittel

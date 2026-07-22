@@ -5,7 +5,7 @@ Läuft auf einer **Ugreen NAS** (Docker/Nginx) oder lokal. Der Browser spricht *
 
 **Autor:** [freeFuncti0n](https://github.com/freeFuncti0n) · **Lizenz:** MIT
 
-> Die frühere iOS-/Android-App wird nicht weiterentwickelt. Diese Web-App ist der empfohlene Companion. Live-Daten kommen ausschließlich über WiFi, nicht über BLE.
+Live-Daten und Fernsteuerung laufen über **WiFi** (REST + WebSocket), nicht über BLE.
 
 ## Architektur
 
