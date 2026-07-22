@@ -2,7 +2,12 @@
 
 ## Supported versions
 
-Only the latest `main` branch is actively maintained.
+| Version | Supported |
+|---------|-----------|
+| Latest tagged release (`v*`) | Yes |
+| `main` branch (development) | Best-effort |
+
+See [Releases](https://github.com/freeFuncti0n/GrindCompanio/releases) and [`docs/RELEASE.md`](docs/RELEASE.md).
 
 ## Reporting a vulnerability
 

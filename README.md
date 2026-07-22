@@ -94,7 +94,7 @@ GrindCompanio adds a WiFi LAN API and browser companion on top of that foundatio
 | [`smart-grind-by-weight/`](smart-grind-by-weight/) | Firmware v1.4.0 + WiFi API + release binaries |
 | [`docs/DOC.md`](docs/DOC.md) | Setup guide (hardware, flash, Docker, first use) |
 
-Development and releases are on **`main`**.
+Development and releases are on **`main`**. Tagged releases: [`docs/RELEASE.md`](docs/RELEASE.md) · current companion version **1.0.0**.
 
 ---
 

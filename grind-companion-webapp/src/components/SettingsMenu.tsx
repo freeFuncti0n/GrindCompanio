@@ -85,6 +85,7 @@ export function SettingsMenu() {
           >
             {t('settings.en')}
           </button>
+          <div className="settings-version muted">v{__APP_VERSION__}</div>
         </div>
       ) : null}
     </div>

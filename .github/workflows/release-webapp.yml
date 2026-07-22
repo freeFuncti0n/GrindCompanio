@@ -1,0 +1,95 @@
+name: Release Web App
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: ver
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          EXPECTED="$(tr -d '\r\n' < VERSION)"
+          if [ "$VERSION" != "$EXPECTED" ]; then
+            echo "::error::Tag ${TAG} does not match VERSION file (${EXPECTED})"
+            exit 1
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: grind-companion-webapp/package-lock.json
+
+      - name: Build web app
+        working-directory: grind-companion-webapp
+        run: |
+          npm ci
+          npm run build
+
+      - name: Package static assets
+        run: |
+          VER="${{ steps.ver.outputs.version }}"
+          (cd grind-companion-webapp/dist && zip -r "../../grind-companion-webapp-${VER}.zip" .)
+
+      - name: Extract changelog section
+        id: notes
+        run: |
+          VER="${{ steps.ver.outputs.version }}"
+          awk -v ver="$VER" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "GrindCompanio web companion ${{ steps.ver.outputs.tag }}" > release-notes.md
+          fi
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: grind-companion-webapp
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/grindcompanio:${{ steps.ver.outputs.version }}
+            ghcr.io/${{ github.repository_owner }}/grindcompanio:latest
+
+      - name: Create GitHub release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.ver.outputs.tag }}"
+          VER="${{ steps.ver.outputs.version }}"
+          IS_PRERELEASE=false
+          if [[ "$TAG" == *"-rc."* || "$TAG" == *"-alpha"* || "$TAG" == *"-beta"* ]]; then
+            IS_PRERELEASE=true
+          fi
+          ARGS=(--title "GrindCompanio ${VER}" --notes-file release-notes.md)
+          if [ "$IS_PRERELEASE" = true ]; then
+            ARGS+=(--prerelease)
+          fi
+          gh release create "$TAG" "${ARGS[@]}" \
+            "grind-companion-webapp-${VER}.zip#Static web app (dist)"
