@@ -22,10 +22,10 @@ GrindCompanio adds a WiFi LAN API and browser companion on top of that foundatio
 
 ## What you need
 
-1. Waveshare ESP32-S3 Touch AMOLED (same board as upstream Jaapp)
+1. The complete build of **[smart-grind-by-weight](https://github.com/jaapp/smart-grind-by-weight)**
 2. This firmware (Jaapp **v1.4.0** + GrindCompanio WiFi API) — source or release binaries under [`smart-grind-by-weight/release/`](smart-grind-by-weight/release/)
 3. **2.4 GHz** Wi‑Fi (ESP32-S3 has no 5 GHz)
-4. Optional: browser UI on a NAS (`grind-companion-webapp`)
+4. Something wich runs the Web App like a Py or NAS (`grind-companion-webapp`)
 
 ---
 
