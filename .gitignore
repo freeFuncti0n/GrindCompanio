@@ -2,7 +2,11 @@
 .DS_Store
 Thumbs.db
 .vscode/
+.cursor/
 *.swp
+
+# Local agent / editor instructions (not part of the public project)
+AGENTS.md
 
 # Temp / scratch
 _remote_check/
