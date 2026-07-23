@@ -174,6 +174,7 @@ export const useGrinderStore = create<GrinderState>((set, get) => ({
       const existing = await getExistingSessionIds();
       let imported = 0;
       let skipped = 0;
+      const failedIds: number[] = [];
       for (let i = 0; i < remoteIds.length; i++) {
         const id = remoteIds[i];
         const pct = Math.round(((i + 1) / remoteIds.length) * 100);
@@ -183,14 +184,22 @@ export const useGrinderStore = create<GrinderState>((set, get) => ({
           continue;
         }
         set({ syncMessage: `Importing session ${id}…`, syncProgress: pct });
-        const fileData = await client.getSessionBinary(id);
-        const parsed = parseSessionFile(new Uint8Array(fileData), id);
-        await upsertParsedSession(parsed.session, parsed.events, parsed.measurements);
-        imported += 1;
+        try {
+          const fileData = await client.getSessionBinary(id);
+          const parsed = parseSessionFile(new Uint8Array(fileData), id);
+          await upsertParsedSession(parsed.session, parsed.events, parsed.measurements);
+          imported += 1;
+        } catch {
+          failedIds.push(id);
+        }
       }
+      const failedMessage =
+        failedIds.length > 0
+          ? `, ${failedIds.length} failed (session ${failedIds.join(', ')})`
+          : '';
       set({
         isSyncing: false,
-        syncMessage: `Done: ${imported} imported, ${skipped} skipped`,
+        syncMessage: `Done: ${imported} imported, ${skipped} skipped${failedMessage}`,
         syncProgress: 100,
       });
       return { imported, skipped };
