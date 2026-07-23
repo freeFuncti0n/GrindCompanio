@@ -10,7 +10,11 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('../network/GrinderHttpClient', () => ({
   GrinderHttpClient: class {
-    constructor(private readonly host: string) {}
+    private readonly host: string;
+
+    constructor(host: string) {
+      this.host = host;
+    }
 
     getBaseUrl() {
       return `http://${this.host}`;
