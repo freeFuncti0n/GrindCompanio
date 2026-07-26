@@ -221,17 +221,30 @@ export const useGrinderStore = create<GrinderState>((set, get) => ({
   },
 
   startRemoteGrind: async () => {
-    const { remoteSupported, live, wifiHost } = get();
+    const { remoteSupported, wifiHost } = get();
     if (!remoteSupported) {
       set({ remoteMessage: 'Remote benötigt WiFi-Firmware' });
       return;
     }
-    if (!canStartRemote(live)) {
-      set({ remoteMessage: 'Grind läuft bereits' });
-      return;
-    }
     try {
-      await getHttpClient(wifiHost).postLiveStart();
+      const client = getHttpClient(wifiHost);
+      const current = await client.getLiveState();
+      const refreshedLive: LiveTelemetry = {
+        weight_g: current.weight_g,
+        flow_g_s: current.flow_g_s,
+        target_g: current.target_g,
+        progress_pct: current.progress,
+        phase_id: current.phase_id,
+        profile_id: current.profile_id,
+        grind_mode: current.grind_mode,
+        motor_on: current.motor_on,
+      };
+      set({ live: refreshedLive });
+      if (current.active || !canStartRemote(refreshedLive)) {
+        set({ remoteMessage: 'Grind läuft bereits' });
+        return;
+      }
+      await client.postLiveStart();
       set({ remoteMessage: null, liveChart: [] });
     } catch (e) {
       set({ remoteMessage: e instanceof Error ? e.message : String(e) });
