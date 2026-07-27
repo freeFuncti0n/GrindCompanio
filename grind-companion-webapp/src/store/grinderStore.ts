@@ -5,6 +5,7 @@ import { parseSessionFile } from '../parsing/sessionParser';
 import type { LiveTelemetry } from '../parsing/types';
 import {
   getExistingSessionIds,
+  listSessions,
   upsertParsedSession,
 } from '../db/database';
 
@@ -206,11 +207,20 @@ export const useGrinderStore = create<GrinderState>((set, get) => ({
   enableLive: async () => {
     const client = getHttpClient(get().wifiHost);
     grinderLiveWs.connect(client.getWsUrl(), (telemetry) => {
+      const previousPhase = get().live?.phase_id ?? null;
       set((state) => ({
         live: telemetry,
         liveChart: appendLiveChart(state.liveChart, telemetry),
         liveSupported: true,
       }));
+      void handleGrindCompletionSync(
+        previousPhase,
+        telemetry.phase_id,
+        () => get().sync(),
+        async () => {
+          await listSessions();
+        }
+      );
     });
     set({ liveSupported: true });
   },
@@ -286,7 +296,8 @@ export async function handleGrindCompletionSync(
   prevPhase: number | null,
   currentPhase: number | null,
   syncFn: () => Promise<{ imported: number; skipped: number }>,
-  refreshSessions: () => Promise<void>
+  refreshSessions: () => Promise<void>,
+  retryDelaysMs: readonly number[] = [500, 1000, 2000]
 ): Promise<void> {
   const finished = currentPhase === PHASE_COMPLETED || currentPhase === PHASE_TIMEOUT;
   const wasActive =
@@ -296,7 +307,13 @@ export async function handleGrindCompletionSync(
     prevPhase !== PHASE_TIMEOUT;
   if (finished && wasActive) {
     try {
-      await syncFn();
+      for (let attempt = 0; ; attempt += 1) {
+        const result = await syncFn();
+        if (result.imported > 0 || attempt === retryDelaysMs.length) break;
+        await new Promise<void>((resolve) => {
+          setTimeout(resolve, retryDelaysMs[attempt]);
+        });
+      }
       await refreshSessions();
     } catch {
       /* ignore */
