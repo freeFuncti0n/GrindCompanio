@@ -1,13 +1,10 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import {
-  handleGrindCompletionSync,
   isGrindActivePhase,
   isPurgeConfirmPhase,
   useGrinderStore,
 } from '../store/grinderStore';
-import { listSessions } from '../db/database';
 import { ProgressArc } from '../components/ProgressArc';
 import { SessionChart } from '../components/SessionChart';
 import { useEnumLabels } from '../i18n/useEnumLabels';
@@ -25,10 +22,8 @@ export function GrindPage() {
   const stopRemoteGrind = useGrinderStore((s) => s.stopRemoteGrind);
   const continueRemotePurge = useGrinderStore((s) => s.continueRemotePurge);
   const returnRemoteIdle = useGrinderStore((s) => s.returnRemoteIdle);
-  const sync = useGrinderStore((s) => s.sync);
   const clearRemoteMessage = useGrinderStore((s) => s.clearRemoteMessage);
 
-  const [prevPhase, setPrevPhase] = useState<number | null>(null);
   const connected = status === 'connected';
   const phaseId = live?.phase_id;
   const purgeConfirm = isPurgeConfirmPhase(phaseId);
@@ -37,14 +32,6 @@ export function GrindPage() {
   const weight = live?.weight_g ?? 0;
   const target = live?.target_g ?? 0;
   const flow = live?.flow_g_s ?? 0;
-
-  useEffect(() => {
-    if (phaseId == null) return;
-    void handleGrindCompletionSync(prevPhase, phaseId, sync, async () => {
-      await listSessions();
-    });
-    setPrevPhase(phaseId);
-  }, [phaseId, prevPhase, sync]);
 
   if (!connected) {
     return (
