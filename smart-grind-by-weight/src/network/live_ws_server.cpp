@@ -11,11 +11,10 @@
 LiveWsServer live_ws_server;
 
 LiveWsServer::LiveWsServer()
-    : ws_(WIFI_WS_PATH)
+    : ws_(nullptr)
     , grind_controller_(nullptr)
     , hardware_manager_(nullptr)
     , bluetooth_(nullptr)
-    , attached_(false)
     , streaming_enabled_(false)
     , last_broadcast_ms_(0) {}
 
@@ -27,19 +26,18 @@ void LiveWsServer::init(AsyncWebServer* server,
     hardware_manager_ = hardware_manager;
     bluetooth_ = bluetooth;
 
-    ws_.onEvent([this](AsyncWebSocket* s, AsyncWebSocketClient* c, AwsEventType type,
-                       void* arg, uint8_t* data, size_t len) {
+    if (!server || ws_) return;
+
+    ws_ = new AsyncWebSocket(WIFI_WS_PATH);
+    ws_->onEvent([this](AsyncWebSocket* s, AsyncWebSocketClient* c, AwsEventType type,
+                        void* arg, uint8_t* data, size_t len) {
         this->on_ws_event(s, c, type, arg, data, len);
     });
-
-    if (server && !attached_) {
-        server->addHandler(&ws_);
-        attached_ = true;
-    }
+    server->addHandler(ws_);
 }
 
 size_t LiveWsServer::client_count() const {
-    return ws_.count();
+    return ws_ ? ws_->count() : 0;
 }
 
 void LiveWsServer::on_ws_event(AsyncWebSocket* server, AsyncWebSocketClient* client,
@@ -56,7 +54,7 @@ void LiveWsServer::on_ws_event(AsyncWebSocket* server, AsyncWebSocketClient* cli
             break;
         case WS_EVT_DISCONNECT:
             Serial.printf("Live WS: Client %u disconnected\n", client->id());
-            if (ws_.count() == 0) {
+            if (server->count() == 0) {
                 streaming_enabled_ = false;
             }
             break;
@@ -66,12 +64,13 @@ void LiveWsServer::on_ws_event(AsyncWebSocket* server, AsyncWebSocketClient* cli
 }
 
 void LiveWsServer::handle() {
-    ws_.cleanupClients();
+    if (!ws_) return;
+    ws_->cleanupClients();
     broadcast_telemetry();
 }
 
 void LiveWsServer::broadcast_telemetry() {
-    if (!streaming_enabled_ || ws_.count() == 0) return;
+    if (!ws_ || !streaming_enabled_ || ws_->count() == 0) return;
     if (bluetooth_ && (bluetooth_->is_updating() || bluetooth_->is_data_export_active())) return;
     if (!grind_controller_ || !grind_controller_->is_active()) return;
 
@@ -84,5 +83,5 @@ void LiveWsServer::broadcast_telemetry() {
         return;
     }
 
-    ws_.binaryAll(payload, BLE_LIVE_PAYLOAD_BYTES);
+    ws_->binaryAll(payload, BLE_LIVE_PAYLOAD_BYTES);
 }

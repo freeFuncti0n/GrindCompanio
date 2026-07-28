@@ -22,15 +22,14 @@ public:
     void handle();
     void set_streaming_enabled(bool enabled) { streaming_enabled_ = enabled; }
     bool is_streaming_enabled() const { return streaming_enabled_; }
-    void reset_attachment() { attached_ = false; }
-  size_t client_count() const;
+    size_t client_count() const;
 
 private:
-    AsyncWebSocket ws_;
+    // AsyncWebServer takes ownership of handlers passed to addHandler().
+    AsyncWebSocket* ws_;
     GrindController* grind_controller_;
     HardwareManager* hardware_manager_;
     BluetoothManager* bluetooth_;
-    bool attached_;
     bool streaming_enabled_;
     unsigned long last_broadcast_ms_;
 
