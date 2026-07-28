@@ -247,14 +247,16 @@ void HttpServer::begin() {
     if (running_) return;
     if (!wifi_ || !wifi_->is_connected()) return;
 
-    server_ = new AsyncWebServer(WIFI_HTTP_PORT);
-    register_routes();
+    if (!server_) {
+        server_ = new AsyncWebServer(WIFI_HTTP_PORT);
+        register_routes();
 
-    if (live_ws_ && server_) {
-        live_ws_->init(server_, grind_controller_, hardware_manager_, bluetooth_);
+        if (live_ws_) {
+            live_ws_->init(server_, grind_controller_, hardware_manager_, bluetooth_);
+        }
+
+        server_->begin();
     }
-
-    server_->begin();
     running_ = true;
     Serial.printf("HTTP: Server started on port %d\n", WIFI_HTTP_PORT);
 }
@@ -270,13 +272,7 @@ void HttpServer::handle() {
             live_ws_->handle();
         }
     } else if (running_ && server_) {
-        if (live_ws_) {
-            live_ws_->reset_attachment();
-        }
-        server_->end();
-        delete server_;
-        server_ = nullptr;
         running_ = false;
-        Serial.println("HTTP: Server stopped (WiFi disconnected)");
+        Serial.println("HTTP: WiFi disconnected; server awaiting reconnect");
     }
 }
