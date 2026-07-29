@@ -5,32 +5,32 @@
 WifiManager wifi_manager;
 
 WifiManager::WifiManager()
-    : prefs_(nullptr)
-    , enabled_(false)
+    : enabled_(false)
     , connected_(false)
     , connect_in_progress_(false)
     , last_reconnect_attempt_ms_(0) {
     ip_string_[0] = '\0';
 }
 
-void WifiManager::init(Preferences* prefs) {
-    prefs_ = prefs;
-    if (!prefs_) return;
+void WifiManager::init() {
+    enabled_ = true;
+    if (!prefs_.begin(WIFI_PREFS_NAMESPACE, true)) {
+        Serial.println("WiFi: Preferences unavailable, using enabled default");
+        return;
+    }
 
-    prefs_->begin(WIFI_PREFS_NAMESPACE, true);
-    enabled_ = prefs_->getBool(WIFI_PREF_ENABLED_KEY, true);
-    prefs_->end();
+    enabled_ = prefs_.getBool(WIFI_PREF_ENABLED_KEY, true);
+    prefs_.end();
 }
 
 void WifiManager::load_credentials(String& ssid, String& password) {
     ssid = "";
     password = "";
 
-    if (prefs_) {
-        prefs_->begin(WIFI_PREFS_NAMESPACE, true);
-        ssid = prefs_->getString(WIFI_PREF_SSID_KEY, "");
-        password = prefs_->getString(WIFI_PREF_PASS_KEY, "");
-        prefs_->end();
+    if (prefs_.begin(WIFI_PREFS_NAMESPACE, true)) {
+        ssid = prefs_.getString(WIFI_PREF_SSID_KEY, "");
+        password = prefs_.getString(WIFI_PREF_PASS_KEY, "");
+        prefs_.end();
     }
 
     if (ssid.length() == 0 && strlen(WIFI_COMPILE_SSID) > 0) {
