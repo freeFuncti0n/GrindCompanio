@@ -11,7 +11,7 @@ class WifiManager {
 public:
     WifiManager();
 
-    void init(Preferences* prefs);
+    void init();
     void begin();
     void handle();
 
@@ -21,7 +21,7 @@ public:
     int8_t get_rssi() const;
 
 private:
-    Preferences* prefs_;
+    Preferences prefs_;
     bool enabled_;
     bool connected_;
     bool connect_in_progress_;

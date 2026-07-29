@@ -81,7 +81,7 @@ void setup() {
     bluetooth_manager.init(hardware_manager.get_preferences());
     bluetooth_manager.set_live_sources(&grind_controller, &hardware_manager);
 
-    wifi_manager.init(hardware_manager.get_preferences());
+    wifi_manager.init();
     wifi_manager.begin();
     http_server.init(&wifi_manager,
                      &bluetooth_manager,
