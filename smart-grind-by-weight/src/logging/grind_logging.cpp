@@ -9,6 +9,8 @@
 
 namespace {
 
+constexpr const char* SESSION_TEMP_FILE = "/.session_write.tmp";
+
 GrindTerminationReason classify_termination_reason(const char* final_result) {
     if (!final_result) {
         return GrindTerminationReason::UNKNOWN;
@@ -1184,10 +1186,13 @@ bool GrindLogger::ensure_sessions_directory_exists() {
 bool GrindLogger::write_individual_session_file(uint32_t session_id, const GrindSession& session, const GrindEvent* events, const GrindMeasurement* measurements) {
     char filename[64];
     snprintf(filename, sizeof(filename), SESSION_FILE_FORMAT, session_id);
-    
-    File file = LittleFS.open(filename, "w");
+
+    // Keep incomplete data outside the sessions directory so concurrent LAN
+    // exports can only discover fully committed session files.
+    LittleFS.remove(SESSION_TEMP_FILE);
+    File file = LittleFS.open(SESSION_TEMP_FILE, "w");
     if (!file) {
-        LOG_BLE("ERROR: Failed to open session file for writing: %s\n", filename);
+        LOG_BLE("ERROR: Failed to open temporary session file for writing\n");
         return false;
     }
     
@@ -1214,12 +1219,19 @@ bool GrindLogger::write_individual_session_file(uint32_t session_id, const Grind
         (measurements_size > 0 && file.write((uint8_t*)measurements, measurements_size) != measurements_size)) {
         
         file.close();
-        LittleFS.remove(filename); // Clean up partial file
+        LittleFS.remove(SESSION_TEMP_FILE);
         LOG_BLE("ERROR: Failed to write session data to file: %s\n", filename);
         return false;
     }
     
     file.close();
+
+    if (!LittleFS.rename(SESSION_TEMP_FILE, filename)) {
+        LittleFS.remove(SESSION_TEMP_FILE);
+        LOG_BLE("ERROR: Failed to commit session file: %s\n", filename);
+        return false;
+    }
+
     LOG_BLE("Successfully wrote session %lu to file (%zu bytes)\n", session_id, total_data_size + sizeof(header));
     return true;
 }
