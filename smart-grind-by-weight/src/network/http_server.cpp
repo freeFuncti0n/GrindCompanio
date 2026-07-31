@@ -235,7 +235,10 @@ void HttpServer::register_routes() {
                 return;
             }
 
-            request->send(LittleFS, filename, "application/octet-stream");
+            AsyncWebServerResponse* response =
+                request->beginResponse(LittleFS, filename, "application/octet-stream");
+            add_cors_headers(response);
+            request->send(response);
             return;
         }
 
