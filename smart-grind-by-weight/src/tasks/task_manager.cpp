@@ -292,13 +292,26 @@ void TaskManager::suspend_hardware_tasks() {
     if (ota_suspended) return;
     
     LOG_BLE("TaskManager: Suspending hardware tasks for OTA operations\n");
-    
-    if (task_handles.weight_sampling_task) {
-        vTaskSuspend(task_handles.weight_sampling_task);
-    }
-    
+
+    // Stop the control loop before checking the motor so it cannot restart an
+    // infinite RMT transmission while the remaining hardware tasks are paused.
     if (task_handles.grind_control_task) {
         vTaskSuspend(task_handles.grind_control_task);
+    }
+
+    Grinder* grinder = hardware_manager ? hardware_manager->get_grinder() : nullptr;
+    if (grinder && grinder->is_grinding()) {
+        LOG_BLE("TaskManager: Stopping active grinder before OTA\n");
+        if (grind_controller && grind_controller->is_active()) {
+            grind_controller->stop_grind();
+        } else {
+            // Motor tests run outside GrindController and still need a direct stop.
+            grinder->stop();
+        }
+    }
+
+    if (task_handles.weight_sampling_task) {
+        vTaskSuspend(task_handles.weight_sampling_task);
     }
 
     if (task_handles.file_io_task) {
