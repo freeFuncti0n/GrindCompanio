@@ -6,6 +6,7 @@
 #include "grind_mode.h"
 #include "grind_session.h"
 #include "grind_strategy.h"
+#include "session_end_barrier.h"
 #include "weight_grind_strategy.h"
 #include "time_grind_strategy.h"
 #include <Preferences.h>
@@ -156,8 +157,7 @@ private:
     void (*ui_event_callback)(const GrindEventData&) = nullptr;
     bool ui_ready_for_setup = false; // Flag to track UI acknowledgment of INITIALIZING phase
     
-    // Flag to prevent repeated flash operations for terminal phases (COMPLETED/TIMEOUT)
-    bool session_end_flash_queued = false;
+    SessionEndBarrier session_end_barrier;
     char last_error_message[32];
 
     GrindSessionDescriptor session_descriptor;
@@ -217,7 +217,7 @@ public:
     
     // Flash operation system
     void process_queued_flash_operations(); // Core 1: Process flash ops from Core 0 queue
-    void queue_flash_operation(const FlashOpRequest& request); // Core 0: Queue flash operation
+    bool queue_flash_operation(const FlashOpRequest& request); // Core 0: Queue flash operation
     
     // Log message system
     void process_queued_log_messages(); // Core 1: Process log messages from Core 0 queue
@@ -271,6 +271,8 @@ public:
     
 private:
     void switch_phase(GrindPhase new_phase, const GrindLoopData& loop_data = {});
+    void try_queue_session_end(GrindPhase terminal_phase);
+    bool complete_pending_return_to_idle();
     void final_measurement(const GrindLoopData& loop_data);
     void monitor_mechanical_instability(const GrindLoopData& loop_data);
 
