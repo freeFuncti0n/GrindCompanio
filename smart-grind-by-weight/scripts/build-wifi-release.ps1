@@ -22,6 +22,14 @@ Copy-Item -Force (Join-Path $buildDir 'firmware.bin') (Join-Path $releaseDir 'fi
 Copy-Item -Force (Join-Path $buildDir 'bootloader.bin') (Join-Path $releaseDir 'bootloader.bin')
 Copy-Item -Force (Join-Path $buildDir 'partitions.bin') (Join-Path $releaseDir 'partitions.bin')
 
+$fwRelease = Join-Path $releaseDir 'firmware-v1.4.0-wifi.bin'
+if ($env:USERNAME) {
+    $fwText = [System.Text.Encoding]::GetEncoding(28591).GetString([System.IO.File]::ReadAllBytes($fwRelease))
+    if ($fwText.Contains($env:USERNAME)) {
+        throw "firmware-v1.4.0-wifi.bin contains the local username. Release binaries must not embed a user profile path."
+    }
+}
+
 @"
 # Release binaries — firmware/v1.4.0-wifi
 

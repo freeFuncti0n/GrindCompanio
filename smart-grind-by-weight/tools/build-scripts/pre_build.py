@@ -130,6 +130,36 @@ def create_git_info_header():
     except Exception as e:
         print(f"Error creating header file: {e}", file=sys.stderr)
 
+def profile_path_prefixes():
+    """Home directory and PlatformIO core dir, each with both slash styles."""
+    home = os.path.expanduser("~")
+    core = os.environ.get("PLATFORMIO_CORE_DIR") or os.path.join(home, ".platformio")
+    core = os.path.expanduser(core)
+    prefixes = []
+    for path in (core, home):
+        if not path or path == "~":
+            continue
+        for variant in (path.replace("\\", "/"), path.replace("/", "\\")):
+            if variant and variant not in prefixes and variant not in ("/", "\\"):
+                prefixes.append(variant)
+    # Longer prefixes first so the core directory is remapped before home.
+    prefixes.sort(key=len, reverse=True)
+    return prefixes
+
+
+def file_prefix_map_flags(prefixes):
+    """Compiler flags that keep __FILE__ from embedding the home directory.
+
+    Each flag is one string so a path that contains spaces is not split.
+    """
+    flags = []
+    for prefix in prefixes:
+        flags.append(f"-ffile-prefix-map={prefix}=./")
+        flags.append(f"-fmacro-prefix-map={prefix}=./")
+        flags.append(f"-fdebug-prefix-map={prefix}=./")
+    return flags
+
+
 def main():
     """Main function to handle different modes."""
     if len(sys.argv) > 1 and sys.argv[1] == "--header":
@@ -145,6 +175,9 @@ def main():
 # When run from PlatformIO, execute immediately
 if platformio_mode:
     create_git_info_header()
+    prefix_flags = file_prefix_map_flags(profile_path_prefixes())
+    if prefix_flags:
+        env.Append(CCFLAGS=prefix_flags)
 
 # When run manually
 if __name__ == "__main__":

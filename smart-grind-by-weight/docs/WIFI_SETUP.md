@@ -21,6 +21,8 @@ This guide applies to GrindCompanio firmware on **`main`**: Jaapp base **v1.4.0*
 
 Prebuilt files are under [`release/`](../release/):
 
+Release binaries must not contain a local user-profile path; the build strips the home directory from `__FILE__`.
+
 | File | Meaning |
 |------|---------|
 | `firmware-v1.4.0-wifi.bin` | App image (offset **0x320000** with Delta OTA partition) |

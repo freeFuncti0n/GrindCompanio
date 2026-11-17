@@ -11,6 +11,30 @@ from datetime import datetime
 import shutil
 
 
+def find_embedded_home_path(firmware_bytes):
+    """Return the current home path if the image contains it.
+
+    Checks both slash styles. Does not flag the generic word Users or the
+    placeholder redacted.
+    """
+    home = os.path.expanduser("~")
+    if not home or home in ("~", "/", "\\", "Users", "redacted"):
+        return None
+    spellings = []
+    for variant in (home.replace("\\", "/"), home.replace("/", "\\")):
+        if (
+            variant
+            and variant not in spellings
+            and variant not in ("/", "\\", "Users", "redacted")
+        ):
+            spellings.append(variant)
+    for spelling in spellings:
+        encoded = spelling.encode("utf-8", "surrogateescape")
+        if encoded and encoded in firmware_bytes:
+            return spelling
+    return None
+
+
 def get_build_number(env):
     """Get the current BUILD_NUMBER from git_info.h"""
     import re
@@ -42,7 +66,17 @@ def archive_firmware(source, target, env):
     if not os.path.exists(firmware_path):
         print(f"❌ Firmware binary not found: {firmware_path}")
         return
-    
+
+    with open(firmware_path, "rb") as firmware_file:
+        firmware_bytes = firmware_file.read()
+    leaked_path = find_embedded_home_path(firmware_bytes)
+    if leaked_path:
+        print(
+            "ERROR: firmware.bin contains the local user profile path "
+            f"({leaked_path}). Release images must not embed a home directory."
+        )
+        env.Exit(1)
+
     # Set up cache directory
     cache_dir = os.path.join(project_dir, "firmware_cache")
     
